@@ -1,7 +1,9 @@
 """User model."""
+
 import uuid
 from datetime import datetime, timezone
 
+import sqlalchemy as sa
 from sqlmodel import Field, SQLModel
 
 
@@ -22,5 +24,11 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(default="")
     is_active: bool = Field(default=True)
     is_verified: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=utcnow)
-    updated_at: datetime = Field(default_factory=utcnow)
+    created_at: datetime = Field(
+        default_factory=utcnow,
+        sa_column=sa.Column(sa.DateTime(timezone=True), nullable=False),
+    )
+    updated_at: datetime = Field(
+        default_factory=utcnow,
+        sa_column=sa.Column(sa.DateTime(timezone=True), nullable=False),
+    )

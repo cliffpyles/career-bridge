@@ -2,17 +2,16 @@
 Auth service — JWT token creation and validation, password hashing.
 This is a local auth stub. In production you might swap in OAuth or SSO.
 """
+
 from datetime import datetime, timedelta, timezone
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import Settings
 from app.models.user import User
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthService:
@@ -22,10 +21,10 @@ class AuthService:
     # ─── Password helpers ─────────────────────────────────────────────
 
     def hash_password(self, password: str) -> str:
-        return pwd_context.hash(password)
+        return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     def verify_password(self, plain: str, hashed: str) -> bool:
-        return pwd_context.verify(plain, hashed)
+        return bcrypt.checkpw(plain.encode(), hashed.encode())
 
     # ─── JWT helpers ──────────────────────────────────────────────────
 
@@ -79,9 +78,7 @@ class AuthService:
         result = await db.execute(select(User).where(User.id == user_id))
         return result.scalar_one_or_none()
 
-    async def authenticate_user(
-        self, db: AsyncSession, email: str, password: str
-    ) -> User | None:
+    async def authenticate_user(self, db: AsyncSession, email: str, password: str) -> User | None:
         """Verify email + password. Returns user on success, None on failure."""
         result = await db.execute(select(User).where(User.email == email))
         user = result.scalar_one_or_none()

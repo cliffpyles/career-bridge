@@ -42,5 +42,11 @@ class Experience(SQLModel, table=True):
         default_factory=list,
         sa_column=sa.Column(sa.JSON, nullable=False, server_default="[]"),
     )
-    created_at: datetime = Field(default_factory=utcnow)
-    updated_at: datetime = Field(default_factory=utcnow)
+    created_at: datetime = Field(
+        default_factory=utcnow,
+        sa_column=sa.Column(sa.DateTime(timezone=True), nullable=False),
+    )
+    updated_at: datetime = Field(
+        default_factory=utcnow,
+        sa_column=sa.Column(sa.DateTime(timezone=True), nullable=False),
+    )
