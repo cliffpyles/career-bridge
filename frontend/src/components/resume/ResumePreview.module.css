@@ -1,0 +1,147 @@
+/* The outer scroll container */
+.preview {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface-secondary);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The document "paper" */
+.document {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+  padding: 40px 48px;
+  width: 100%;
+  max-width: 680px;
+  font-family: var(--font-body);
+  font-size: 0.875rem; /* 14px — compact for a resume */
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.header {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--border-default);
+}
+
+.headerName {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.headerContact {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Sections ────────────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: var(--space-5);
+}
+
+.sectionTitle {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-1);
+  margin: 0 0 var(--space-3);
+}
+
+/* ── Summary ─────────────────────────────────────────────────────── */
+
+.summaryText {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Entries (Experience, Projects, Education) ────────────────────── */
+
+.entry {
+  margin-bottom: var(--space-4);
+}
+
+.entry:last-child {
+  margin-bottom: 0;
+}
+
+.entryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.entryTitle {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.entryDate {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.entrySub {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 2px 0 var(--space-2);
+}
+
+.bullets {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.bullets li {
+  margin-bottom: 3px;
+  line-height: 1.5;
+}
+
+/* ── Skills ──────────────────────────────────────────────────────── */
+
+.skillRow {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+  align-items: baseline;
+}
+
+.skillCategoryName {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.skillList {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
