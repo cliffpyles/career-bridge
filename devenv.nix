@@ -29,6 +29,15 @@
     port = 5432;
     initialDatabases = [{ name = "career_bridge"; }];
     listen_addresses = "127.0.0.1";
+    # Create the 'postgres' superuser role so the DATABASE_URL creds work
+    # on any machine regardless of the OS username.
+    initialScript = pkgs.writeText "init.sql" ''
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'postgres') THEN
+          CREATE ROLE postgres SUPERUSER LOGIN PASSWORD 'postgres';
+        END IF;
+      END $$;
+    '';
   };
 
   services.redis = {
