@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
-from app.routers import auth, experiences, health
+from app.routers import auth, experiences, health, resumes
 
 settings = get_settings()
 
@@ -54,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router, prefix="/api")
     app.include_router(auth.router, prefix="/api")
     app.include_router(experiences.router, prefix="/api")
+    app.include_router(resumes.router, prefix="/api")
 
     return app
 
