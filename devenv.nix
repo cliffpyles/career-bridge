@@ -78,11 +78,20 @@
     echo "Career Bridge dev environment ready."
     echo ""
     echo "Services: PostgreSQL (5432), Redis (6379)"
-    echo "  devenv up         — start all services + servers"
-    echo "  cd backend && pytest  — run backend tests"
-    echo "  cd frontend && npm test  — run frontend tests"
+    echo "  devenv up               — start all services + servers"
+    echo "  seed                    — seed the database with realistic mock data"
+    echo "  cd backend && pytest    — run backend tests"
+    echo "  cd frontend && npm test — run frontend tests"
     echo ""
   '';
+
+  # ─── Scripts (available as commands inside the devenv shell) ─────────────
+  scripts.seed = {
+    exec = ''
+      cd "$DEVENV_ROOT/backend" && python scripts/seed.py "$@"
+    '';
+    description = "Seed the database with realistic mock data (idempotent).";
+  };
 
   # ─── Pre-commit hooks ─────────────────────────────────────────────────
   pre-commit.hooks = {

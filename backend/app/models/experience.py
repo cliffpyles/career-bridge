@@ -30,7 +30,11 @@ class Experience(SQLModel, table=True):
         index=True,
     )
     user_id: uuid.UUID = Field(index=True)
-    type: ExperienceType = Field(index=True)
+    # Stored as VARCHAR to match the migration; sa_column prevents SQLModel from
+    # inferring a PostgreSQL named enum type for the ExperienceType str-enum.
+    type: ExperienceType = Field(
+        sa_column=sa.Column(sa.String(), nullable=False, index=True),
+    )
     title: str = Field(index=True)
     organization: str | None = Field(default=None)
     start_date: date | None = Field(default=None)
