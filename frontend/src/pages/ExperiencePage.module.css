@@ -1,0 +1,165 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.pageContent {
+  flex: 1;
+  padding: var(--space-8) var(--space-6);
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Page header ──────────────────────────────────────── */
+
+.pageHeader {
+  margin-bottom: var(--space-8);
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) both;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl-lh);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+/* ── Filter bar ───────────────────────────────────────── */
+
+.filterBar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) 50ms both;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 360px;
+}
+
+.typeFilter {
+  width: 180px;
+}
+
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+/* ── Content / list ───────────────────────────────────── */
+
+.content {
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) 100ms both;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.listItem {
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) both;
+}
+
+.skeletonCard {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-5);
+}
+
+/* ── Hint / footer text ───────────────────────────────── */
+
+.hint {
+  margin-top: var(--space-8);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) 200ms both;
+}
+
+/* ── Error state ──────────────────────────────────────── */
+
+.errorMessage {
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--accent-danger) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-danger) 25%, transparent);
+  border-left: 3px solid var(--accent-danger);
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  color: var(--accent-danger);
+  line-height: 1.5;
+}
+
+/* ── Delete confirmation modal ────────────────────────── */
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* ── Shared entry animation ───────────────────────────── */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .filterBar {
+    flex-wrap: wrap;
+  }
+
+  .searchInput {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .typeFilter {
+    width: 100%;
+  }
+}
