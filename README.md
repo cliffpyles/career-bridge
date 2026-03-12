@@ -9,7 +9,6 @@ career-bridge/
   frontend/          # React 19 + TypeScript + Vite SPA
   backend/           # FastAPI + PostgreSQL API server
   infrastructure/    # devenv config, Nix OCI image builds, GKE manifests
-  scripts/           # Dev, migration, and data utilities
   planning/          # Product design docs and notes
 ```
 
@@ -41,7 +40,19 @@ devenv up
 
 This starts PostgreSQL 16, Redis 7, the FastAPI backend (`:8000`), and the Vite dev server (`:5173`) together using process-compose. All runtimes and services are pinned by Nix — no global installs required.
 
-See [`infrastructure/README.md`](infrastructure/README.md) for details.
+Once the services are running, seed the database with realistic dev data:
+
+```bash
+seed
+```
+
+This creates three pre-built user accounts and 18 experience entries (one of every type per user) you can use to explore all features. The command is idempotent — safe to run multiple times.
+
+| Seed account            | Password   |
+| ----------------------- | ---------- |
+| alex@careerbridge.dev   | seedpass1  |
+| priya@careerbridge.dev  | seedpass1  |
+| marcus@careerbridge.dev | seedpass1  |
 
 ### Option B — Frontend only
 
@@ -51,7 +62,7 @@ npm install
 npm run dev          # http://localhost:5173
 ```
 
-In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs fully without a backend.
+In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs without a backend. The stub layer includes auth endpoints, so you can sign in with the demo credentials above (or register a local account backed by the stubs).
 
 | Command                 | Description                        |
 | ----------------------- | ---------------------------------- |
@@ -59,7 +70,7 @@ In development mode all `/api/*` requests are intercepted by MSW stubs, so the f
 | `npm run build`         | Type-check and produce `dist/`     |
 | `npm run lint`          | Run ESLint                         |
 | `npm run preview`       | Serve the production build locally |
-| `npm test`              | Run Vitest test suite (74 tests)   |
+| `npm test`              | Run Vitest test suite (114 tests)  |
 | `npm run test:watch`    | Vitest in watch mode               |
 | `npm run test:coverage` | Coverage report via v8             |
 
@@ -72,11 +83,14 @@ cd backend
 pip install -r requirements.txt
 
 # Set required environment variables (see backend/README.md)
-export DATABASE_URL="postgresql+asyncpg://user:pass@localhost:5432/careerbridge"
+export DATABASE_URL="postgresql+asyncpg://user:pass@localhost:5432/career_bridge"
 export SECRET_KEY="change-me"
 
 # Run database migrations
 alembic upgrade head
+
+# Seed with dev data (optional)
+python scripts/seed.py
 
 # Start the dev server
 uvicorn app.main:app --reload   # http://localhost:8000

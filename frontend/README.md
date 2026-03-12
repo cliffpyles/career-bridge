@@ -9,7 +9,7 @@ npm install
 npm run dev   # http://localhost:5173
 ```
 
-In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs fully without a running backend.
+In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs without a running backend. The stub layer covers auth, experiences, and health endpoints.
 
 ## Scripts
 
@@ -37,16 +37,30 @@ src/
     ui/                 # Primitive component library (13 components)
     layout/             # AppShell, Sidebar, ContextBar, BottomNav
   contexts/
+    AuthContext.tsx     # JWT auth state, login/register/logout, token persistence
     ThemeContext.tsx    # Light/dark toggle, persisted to localStorage
-    SidebarContext.tsx  # Collapsed/expanded state, persisted to localStorage
+    SidebarContext.tsx  # Collapsed/expanded state with responsive breakpoints
     ToastContext.tsx    # Imperative toast() API with queuing and auto-dismiss
-  pages/                # Route-level page components (placeholder stubs)
+  pages/
+    LoginPage.tsx       # Public split-panel sign-in / register page
+    DashboardPage.tsx   # Aggregated landing (coming soon)
+    ExperiencePage.tsx  # Experience library — full CRUD with filtering and search
+    ResumesPage.tsx     # Resume library and editor (coming soon)
+    ApplicationsPage.tsx # Application tracker (coming soon)
+    InterviewsPage.tsx  # Interview prep (coming soon)
+    JobBoardPage.tsx    # Job search (coming soon)
+    SavedJobsPage.tsx   # Saved job listings (coming soon)
+    AlertsPage.tsx      # Job alerts (coming soon)
+    SettingsPage.tsx    # Theme toggle and account management (sign out)
+    ProfilePage.tsx     # User profile (coming soon)
+    NotFoundPage.tsx    # 404 handler
+    ErrorPage.tsx       # React Router error boundary
   queries/
     keys.ts             # Centralized TanStack Query key factory
   mocks/
     browser.ts          # MSW browser worker setup
     server.ts           # MSW Node server (used in tests)
-    handlers/           # Request handler stubs (health, auth/me)
+    handlers/           # Request handlers: health, auth, experiences
   router.tsx            # React Router v7 Data Mode route tree
   main.tsx              # App entry — providers, MSW init, RouterProvider
   test/
@@ -56,6 +70,12 @@ src/
     layout/             # Layout component tests
     contexts/           # Context tests
 ```
+
+## Authentication
+
+All authenticated routes are guarded by `AppShell`, which reads from `AuthContext`. Unauthenticated visitors are redirected to `/login` with the intended destination preserved. On return, they land where they originally tried to go.
+
+`AuthContext` persists the JWT to `localStorage` under the key `career-bridge-auth-token` and restores the session on page load via `GET /auth/me`. The `logout()` function clears the token, resets user state, and invalidates the TanStack Query cache.
 
 ## UI Component Library
 
@@ -102,7 +122,7 @@ Each component has a `.tsx` file and a `.module.css` file that references design
 
 ## Testing
 
-Tests use Vitest + React Testing Library. 74 tests across 11 files, all passing.
+Tests use Vitest + React Testing Library. 114 tests across 15 files.
 
 ```bash
 npm test

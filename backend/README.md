@@ -10,7 +10,7 @@ FastAPI + PostgreSQL API server for Career Bridge.
 | ORM            | SQLModel (SQLAlchemy 2.0 async)                    |
 | Migrations     | Alembic                                            |
 | Validation     | Pydantic v2                                        |
-| Auth           | python-jose (HS256 JWT) + passlib (bcrypt)         |
+| Auth           | python-jose (HS256 JWT) + bcrypt                   |
 | Async driver   | asyncpg (PostgreSQL), aiosqlite (tests)            |
 | Async tasks    | Celery + Redis                                     |
 | Server         | Uvicorn                                            |
@@ -27,13 +27,17 @@ backend/
     deps.py           # FastAPI dependencies: get_db, get_current_user, get_settings
     crud/
       base.py         # Generic BaseCRUD[ModelT, CreateT, UpdateT]
+      experience.py   # ExperienceCRUD: list_for_user, get_for_user, search
     models/
       user.py         # User SQLModel table
+      experience.py   # Experience SQLModel table + ExperienceType enum
     schemas/
       auth.py         # TokenResponse, LoginRequest, RegisterRequest, UserResponse
+      experience.py   # ExperienceCreate, ExperienceUpdate, ExperienceResponse
     routers/
       health.py       # GET /health
       auth.py         # POST /auth/register, POST /auth/login, GET /auth/me
+      experiences.py  # CRUD for /experiences with type/tag/search filtering
     services/
       auth.py         # AuthService: hashing, JWT, authenticate, register
       ai/
@@ -44,12 +48,16 @@ backend/
     migrations/
       env.py                          # Alembic async runner
       versions/
-        0001_initial_users.py         # Users table
+        0001_initial_users.py         # users table
+        0002_experiences.py           # experiences table
+  scripts/
+    seed.py           # Idempotent dev-data seed (3 users × 6 experiences each)
   tests/
     conftest.py       # In-memory aiosqlite fixtures: db_session, client
-    test_health.py
-    test_crud.py
-    test_auth.py
+    test_health.py    # 2 tests
+    test_crud.py      # 10 tests (create, get, list, update, delete, pagination, filter)
+    test_auth.py      # 12 tests (register, login, JWT, /me endpoint)
+    test_experiences.py # 15 tests (CRUD, filtering, search, auth guards)
   pyproject.toml
   requirements.txt
   alembic.ini
@@ -60,7 +68,7 @@ backend/
 ### Prerequisites
 
 - Python 3.12+
-- PostgreSQL 16 running locally (or use `devenv up` from the project root — see [`infrastructure/README.md`](../infrastructure/README.md))
+- PostgreSQL 16 running locally (or use `devenv up` from the project root — see the root [`README.md`](../README.md))
 
 ### Install dependencies
 
@@ -78,10 +86,10 @@ Create a `.env` file in `backend/` (or export these variables):
 | `DATABASE_URL`      | Yes      | —                    | `postgresql+asyncpg://user:pass@host/db` |
 | `SECRET_KEY`        | Yes      | —                    | Random string for JWT signing            |
 | `REDIS_URL`         | No       | `redis://localhost:6379/0` | Redis connection string             |
-| `APP_ENV`           | No       | `development`        | `development` \| `production`            |
-| `DEBUG`             | No       | `true` in dev        | SQLAlchemy echo                          |
-| `JWT_ALGORITHM`     | No       | `HS256`              | JWT signing algorithm                    |
-| `JWT_EXPIRE_MINUTES`| No       | `10080` (7 days)     | Token TTL                                |
+| `ENVIRONMENT`       | No       | `development`        | `development` \| `production`            |
+| `DEBUG`             | No       | `false`              | SQLAlchemy echo                          |
+| `ALGORITHM`         | No       | `HS256`              | JWT signing algorithm                    |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | No | `10080` (7 days) | Token TTL                          |
 | `CORS_ORIGINS`      | No       | `["http://localhost:5173"]` | Allowed CORS origins              |
 | `AI_PROVIDER`       | No       | `openai`             | `openai` \| `anthropic`                  |
 | `OPENAI_API_KEY`    | No       | —                    | Required if `AI_PROVIDER=openai`         |
@@ -92,6 +100,14 @@ Create a `.env` file in `backend/` (or export these variables):
 ```bash
 alembic upgrade head
 ```
+
+### Seed dev data (optional)
+
+```bash
+python scripts/seed.py
+```
+
+Creates three user accounts (`alex`, `priya`, `marcus` `@careerbridge.dev`, password `seedpass1`) each with six experience entries covering every `ExperienceType`. Idempotent — safe to run multiple times.
 
 ### Start the dev server
 
@@ -105,17 +121,29 @@ uvicorn app.main:app --reload
 
 ### Health
 
-| Method | Path      | Auth | Description                     |
-| ------ | --------- | ---- | ------------------------------- |
+| Method | Path      | Auth | Description                             |
+| ------ | --------- | ---- | --------------------------------------- |
 | GET    | `/health` | No   | Returns status, version, env, timestamp |
 
 ### Auth
 
-| Method | Path              | Auth    | Description                          |
-| ------ | ----------------- | ------- | ------------------------------------ |
-| POST   | `/auth/register`  | No      | Create account, returns JWT          |
-| POST   | `/auth/login`     | No      | Verify credentials, returns JWT      |
-| GET    | `/auth/me`        | Bearer  | Returns current user profile         |
+| Method | Path              | Auth   | Description                      |
+| ------ | ----------------- | ------ | -------------------------------- |
+| POST   | `/auth/register`  | No     | Create account, returns JWT      |
+| POST   | `/auth/login`     | No     | Verify credentials, returns JWT  |
+| GET    | `/auth/me`        | Bearer | Returns current user profile     |
+
+### Experiences
+
+| Method | Path                  | Auth   | Description                                         |
+| ------ | --------------------- | ------ | --------------------------------------------------- |
+| GET    | `/experiences`        | Bearer | List experiences; filter by `type`, `tag`, or `q`  |
+| POST   | `/experiences`        | Bearer | Create a new experience entry                       |
+| GET    | `/experiences/{id}`   | Bearer | Get a single experience by ID                       |
+| PUT    | `/experiences/{id}`   | Bearer | Replace an experience entry                         |
+| DELETE | `/experiences/{id}`   | Bearer | Delete an experience entry                          |
+
+All `/experiences` endpoints are scoped to the authenticated user — no cross-user access is possible.
 
 ## Running Tests
 
@@ -128,11 +156,12 @@ pytest -v                 # Verbose output
 pytest --cov=app          # With coverage report
 ```
 
-All 24 tests pass:
+39 tests across four files:
 
 - `test_health.py` — 2 tests
-- `test_crud.py` — 11 tests (create, get, list, update, delete, count, pagination, filter)
-- `test_auth.py` — 11 tests (register, login, JWT encode/decode, `/me` endpoint)
+- `test_crud.py` — 10 tests (create, get, list, update, delete, count, pagination, filter)
+- `test_auth.py` — 12 tests (register, login, JWT encode/decode, `/me` endpoint)
+- `test_experiences.py` — 15 tests (CRUD, type/tag/search filtering, auth guards, cross-user isolation)
 
 ## Architecture Notes
 
@@ -142,7 +171,11 @@ All 24 tests pass:
 
 ### Generic BaseCRUD
 
-`app/crud/base.py` provides a typed `BaseCRUD[ModelT, CreateT, UpdateT]` that all domain CRUD classes will extend. It handles pagination, arbitrary keyword filtering, and optional soft-delete via a `deleted_at` field convention.
+`app/crud/base.py` provides a typed `BaseCRUD[ModelT, CreateT, UpdateT]` that all domain CRUD classes extend. It handles pagination, arbitrary keyword filtering, and optional soft-delete via a `deleted_at` field convention.
+
+### Enum columns stored as VARCHAR
+
+SQLModel can infer Python `str`-enums as PostgreSQL named enum types. All enum-typed model fields use an explicit `sa_column=sa.Column(sa.String(), ...)` to store values as `VARCHAR`, matching what the Alembic migrations create and avoiding asyncpg type-cast errors.
 
 ### AI provider abstraction
 
