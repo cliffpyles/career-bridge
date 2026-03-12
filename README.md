@@ -15,19 +15,19 @@ career-bridge/
 
 ## Tech Stack
 
-| Layer         | Technology                                                          |
-| ------------- | ------------------------------------------------------------------- |
+| Layer         | Technology                                                                             |
+| ------------- | -------------------------------------------------------------------------------------- |
 | Frontend      | React 19, TypeScript, Vite 7, React Router v7 (Data Mode), TanStack Query, CSS Modules |
-| Component lib | Lucide icons, custom design-token system (light/dark themes)        |
-| Mocking       | MSW v2 (browser + Node)                                             |
-| Frontend test | Vitest + React Testing Library                                      |
-| Backend       | Python, FastAPI, Pydantic v2, SQLModel, Alembic                     |
-| Database      | PostgreSQL 16                                                       |
-| Cache / Queue | Redis 7 + Celery                                                    |
-| AI            | OpenAI + Anthropic (provider-abstracted via `AIService`)            |
-| Local dev     | devenv (Nix) — PostgreSQL, Redis, backend, frontend via process-compose |
-| Build         | Nix — lean OCI container images, no Docker daemon needed            |
-| Production    | Google GKE, Google Artifact Registry                                |
+| Component lib | Lucide icons, custom design-token system (light/dark themes)                           |
+| Mocking       | MSW v2 (browser + Node)                                                                |
+| Frontend test | Vitest + React Testing Library                                                         |
+| Backend       | Python, FastAPI, Pydantic v2, SQLModel, Alembic                                        |
+| Database      | PostgreSQL 16                                                                          |
+| Cache / Queue | Redis 7 + Celery                                                                       |
+| AI            | OpenAI + Anthropic (provider-abstracted via `AIService`)                               |
+| Local dev     | devenv (Nix) — PostgreSQL, Redis, backend, frontend via process-compose                |
+| Build         | Nix — lean OCI container images, no Docker daemon needed                               |
+| Production    | Google GKE, Google Artifact Registry                                                   |
 
 ## Getting Started
 
@@ -53,15 +53,15 @@ npm run dev          # http://localhost:5173
 
 In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs fully without a backend.
 
-| Command                | Description                               |
-| ---------------------- | ----------------------------------------- |
-| `npm run dev`          | Start Vite dev server with HMR            |
-| `npm run build`        | Type-check and produce `dist/`            |
-| `npm run lint`         | Run ESLint                                |
-| `npm run preview`      | Serve the production build locally        |
-| `npm test`             | Run Vitest test suite (74 tests)          |
-| `npm run test:watch`   | Vitest in watch mode                      |
-| `npm run test:coverage`| Coverage report via v8                   |
+| Command                 | Description                        |
+| ----------------------- | ---------------------------------- |
+| `npm run dev`           | Start Vite dev server with HMR     |
+| `npm run build`         | Type-check and produce `dist/`     |
+| `npm run lint`          | Run ESLint                         |
+| `npm run preview`       | Serve the production build locally |
+| `npm test`              | Run Vitest test suite (74 tests)   |
+| `npm run test:watch`    | Vitest in watch mode               |
+| `npm run test:coverage` | Coverage report via v8             |
 
 See [`frontend/README.md`](frontend/README.md) for the full component and architecture guide.
 
@@ -83,7 +83,3 @@ uvicorn app.main:app --reload   # http://localhost:8000
 ```
 
 See [`backend/README.md`](backend/README.md) for the full setup guide.
-
-## Development Plan
-
-See [`.cursor/plans/career_bridge_dev_plan_1f23fd96.plan.md`](.cursor/plans/career_bridge_dev_plan_1f23fd96.plan.md) for the full 11-phase development roadmap.
