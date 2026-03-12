@@ -1,73 +1,56 @@
-# React + TypeScript + Vite
+# Career Bridge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A career transition management app — track applications, build tailored resumes, prep for interviews, and find jobs, all in one place.
 
-Currently, two official plugins are available:
+## Repository Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+career-bridge/
+  frontend/          # React 19 + TypeScript + Vite app
+  backend/           # FastAPI + PostgreSQL backend (Phase 1+)
+  infrastructure/    # Docker Compose, Kubernetes manifests (Phase 1+)
+  scripts/           # Dev, migration, and data utilities (Phase 1+)
+  planning/          # Product design docs and notes
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Layer          | Technology                                              |
+| -------------- | ------------------------------------------------------- |
+| Frontend       | React 19, TypeScript, Vite 7, TanStack Query, React Router |
+| Backend        | Python, FastAPI, Pydantic v2, SQLModel, Alembic         |
+| Database       | PostgreSQL                                              |
+| Cache / Queue  | Redis + Celery                                          |
+| AI             | OpenAI + Anthropic (provider-abstracted)                |
+| Infrastructure | devenv (local), Docker, Kubernetes (production)         |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
+
+The dev server starts at `http://localhost:5173`.
+
+| Command           | Description                        |
+| ----------------- | ---------------------------------- |
+| `npm run dev`     | Start Vite dev server with HMR     |
+| `npm run build`   | Type-check and produce `dist/`     |
+| `npm run lint`    | Run ESLint                         |
+| `npm run preview` | Preview the production build       |
+
+### Backend
+
+> Coming in Phase 1. See [`backend/README.md`](backend/README.md).
+
+### Full Stack (Docker Compose)
+
+> Coming in Phase 1. See [`infrastructure/README.md`](infrastructure/README.md).
+
+## Development Plan
+
+See [`.cursor/plans/career_bridge_dev_plan_1f23fd96.plan.md`](.cursor/plans/career_bridge_dev_plan_1f23fd96.plan.md) for the full 11-phase development roadmap.

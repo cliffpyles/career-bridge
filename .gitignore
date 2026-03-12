@@ -1,3 +1,9 @@
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/.env*.local
+
 # Logs
 logs
 *.log
@@ -7,18 +13,63 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# ── Python / Backend ──────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
 
-# Editor directories and files
+# Virtual environments
+backend/.venv
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+backend/dist/
+backend/build/
+backend/*.egg-info/
+*.egg
+
+# pytest
+backend/.pytest_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# mypy / ruff / pyright
+.mypy_cache/
+.ruff_cache/
+pyrightconfig.json
+
+# Alembic compiled files (keep migrations themselves)
+backend/app/migrations/versions/__pycache__/
+
+# ── Editors & OS ──────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+Thumbs.db
+
+# ── Environment / Secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── devenv ────────────────────────────────────────────────────────────────────
+.devenv/
+.devenv.flake.nix
+devenv.lock
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+*.override.yml
