@@ -88,7 +88,7 @@
   # ─── Scripts (available as commands inside the devenv shell) ─────────────
   scripts.seed = {
     exec = ''
-      cd "$DEVENV_ROOT/backend" && python scripts/seed.py "$@"
+      cd "$DEVENV_ROOT/backend" && PYTHONPATH="$DEVENV_ROOT/backend" python scripts/seed.py "$@"
     '';
     description = "Seed the database with realistic mock data (idempotent).";
   };
