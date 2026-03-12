@@ -8,7 +8,7 @@ A career transition management app — track applications, build tailored resume
 career-bridge/
   frontend/          # React 19 + TypeScript + Vite app
   backend/           # FastAPI + PostgreSQL backend (Phase 1+)
-  infrastructure/    # Docker Compose, Kubernetes manifests (Phase 1+)
+  infrastructure/    # devenv config, Nix OCI image builds, GKE manifests (Phase 1+)
   scripts/           # Dev, migration, and data utilities (Phase 1+)
   planning/          # Product design docs and notes
 ```
@@ -22,7 +22,9 @@ career-bridge/
 | Database       | PostgreSQL                                              |
 | Cache / Queue  | Redis + Celery                                          |
 | AI             | OpenAI + Anthropic (provider-abstracted)                |
-| Infrastructure | devenv (local), Docker, Kubernetes (production)         |
+| Local Dev      | devenv (Nix) — reproducible env with all runtimes and services      |
+| Build          | Nix — lean OCI container images, no Docker daemon needed            |
+| Production     | Google GKE — standard managed Linux nodes, Google Artifact Registry |
 
 ## Getting Started
 
@@ -47,9 +49,9 @@ The dev server starts at `http://localhost:5173`.
 
 > Coming in Phase 1. See [`backend/README.md`](backend/README.md).
 
-### Full Stack (Docker Compose)
+### Full Stack (devenv)
 
-> Coming in Phase 1. See [`infrastructure/README.md`](infrastructure/README.md).
+> Coming in Phase 1. Run `devenv up` from the project root to start PostgreSQL, Redis, the backend server, and the frontend dev server together. See [`infrastructure/README.md`](infrastructure/README.md).
 
 ## Development Plan
 

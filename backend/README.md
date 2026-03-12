@@ -33,12 +33,15 @@ backend/
     migrations/      # Alembic migrations
   tests/
   pyproject.toml
-  Dockerfile
 ```
 
 ## Running (once implemented)
 
 ```bash
+# Via devenv (recommended — starts backend alongside PostgreSQL and Redis):
+devenv up
+
+# Or standalone:
 cd backend
 python -m uvicorn app.main:app --reload
 ```
