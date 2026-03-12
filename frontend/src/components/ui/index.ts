@@ -36,3 +36,6 @@ export type { CommandPaletteProps, CommandItem } from './CommandPalette'
 
 export { Modal } from './Modal'
 export type { ModalProps } from './Modal'
+
+export { TagInput } from './TagInput'
+export type { TagInputProps } from './TagInput'
