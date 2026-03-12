@@ -34,6 +34,12 @@
   100% { transform: scaleX(1); transform-origin: left; opacity: 0; }
 }
 
+/* Full-screen loading placeholder while auth state is resolving */
+.loadingScreen {
+  min-height: 100dvh;
+  background: var(--surface-ground);
+}
+
 /* Mobile: no sidebar, add bottom padding for nav */
 @media (max-width: 1024px) {
   .shell {

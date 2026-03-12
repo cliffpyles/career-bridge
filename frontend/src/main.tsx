@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { SidebarProvider } from './contexts/SidebarContext'
 import { ToastProvider } from './contexts/ToastContext'
@@ -29,13 +30,15 @@ prepareApp().then(() => {
   createRoot(root).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <SidebarProvider>
-            <ToastProvider>
-              <RouterProvider router={router} />
-            </ToastProvider>
-          </SidebarProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <SidebarProvider>
+              <ToastProvider>
+                <RouterProvider router={router} />
+              </ToastProvider>
+            </SidebarProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,
   )

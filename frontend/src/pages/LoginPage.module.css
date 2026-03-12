@@ -1,0 +1,185 @@
+/* ─── Layout ──────────────────────────────────────────────────── */
+
+.page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+}
+
+/* ─── Brand panel ─────────────────────────────────────────────── */
+
+.brand {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  background: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-10);
+  overflow: hidden;
+}
+
+/* Radial warmth glow */
+.brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 85%, rgba(196, 112, 75, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(196, 112, 75, 0.08) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+/* Large decorative circle */
+.brandDecor {
+  position: absolute;
+  top: -140px;
+  right: -140px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 228, 221, 0.05);
+  pointer-events: none;
+}
+
+.brandDecor::before {
+  content: '';
+  position: absolute;
+  inset: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 228, 221, 0.04);
+}
+
+.brandContent {
+  position: relative;
+  z-index: 1;
+}
+
+.brandMark {
+  display: block;
+  font-size: 28px;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-6);
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) both;
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #E8E4DD;
+  margin-bottom: var(--space-5);
+  animation: fadeSlideIn var(--duration-slow) 80ms var(--ease-out) both;
+}
+
+.brandTagline {
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: rgba(232, 228, 221, 0.48);
+  animation: fadeSlideIn var(--duration-slow) 160ms var(--ease-out) both;
+}
+
+/* ─── Form panel ──────────────────────────────────────────────── */
+
+.formSide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
+  background: var(--surface-ground);
+  min-height: 100dvh;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 400px;
+  animation: fadeSlideIn var(--duration-slow) 100ms var(--ease-out) both;
+}
+
+.formHeader {
+  margin-bottom: var(--space-8);
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.formSubtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* ─── Form ────────────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.errorMessage {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--accent-danger);
+  background: var(--accent-danger-soft);
+  border: 1px solid var(--accent-danger);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ─── Toggle ──────────────────────────────────────────────────── */
+
+.toggle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.toggleLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: var(--font-weight-medium);
+  color: var(--accent-primary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.toggleLink:hover {
+  color: var(--accent-primary-hover);
+}
+
+.toggleLink:focus-visible {
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+
+/* Hide brand panel on narrow screens; show mobile wordmark instead */
+@media (max-width: 768px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .formSide {
+    padding: var(--space-10) var(--space-5);
+    align-items: flex-start;
+    padding-top: var(--space-16);
+  }
+}

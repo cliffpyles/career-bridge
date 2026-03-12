@@ -1,6 +1,7 @@
-import { Outlet, useNavigation } from 'react-router'
+import { Navigate, Outlet, useLocation, useNavigation } from 'react-router'
 import { Sidebar } from './Sidebar'
 import { BottomNav } from './BottomNav'
+import { useAuth } from '../../contexts/AuthContext'
 import { useSidebar } from '../../contexts/SidebarContext'
 import styles from './AppShell.module.css'
 
@@ -8,6 +9,16 @@ export function AppShell() {
   const { collapsed } = useSidebar()
   const navigation = useNavigation()
   const isNavigating = navigation.state !== 'idle'
+  const { isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
+
+  if (isLoading) {
+    return <div className={styles.loadingScreen} aria-label="Loading…" />
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />
+  }
 
   return (
     <div className={`${styles.shell} ${collapsed ? styles.sidebarCollapsed : ''}`}>

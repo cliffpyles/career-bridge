@@ -12,8 +12,13 @@ import { SettingsPage } from './pages/SettingsPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ErrorPage } from './pages/ErrorPage'
+import { LoginPage } from './pages/LoginPage'
 
 export const router = createBrowserRouter([
+  {
+    path: '/login',
+    Component: LoginPage,
+  },
   {
     path: '/',
     Component: AppShell,
