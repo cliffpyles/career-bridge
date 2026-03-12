@@ -17,7 +17,7 @@ career-bridge/
 
 | Layer          | Technology                                              |
 | -------------- | ------------------------------------------------------- |
-| Frontend       | React 19, TypeScript, Vite 7, TanStack Query, React Router |
+| Frontend       | React 19, TypeScript, Vite 7, TanStack Query, React Router v7 (Data Mode) |
 | Backend        | Python, FastAPI, Pydantic v2, SQLModel, Alembic         |
 | Database       | PostgreSQL                                              |
 | Cache / Queue  | Redis + Celery                                          |
