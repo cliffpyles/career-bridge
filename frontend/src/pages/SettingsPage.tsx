@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router'
 import { ContextBar } from '../components/layout/ContextBar'
+import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { useAuth } from '../contexts/AuthContext'
 import { useTheme, type Theme } from '../contexts/ThemeContext'
 import { useToast } from '../contexts/ToastContext'
-import { Sun, Moon, Monitor } from 'lucide-react'
+import { LogOut, Moon, Monitor, Sun } from 'lucide-react'
 import styles from './PageStyles.module.css'
 import settingsStyles from './SettingsPage.module.css'
 
@@ -15,10 +18,17 @@ const themeOptions: { value: Theme; label: string; icon: React.ReactNode }[] = [
 export function SettingsPage() {
   const { theme, setTheme } = useTheme()
   const { success } = useToast()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme)
     success('Theme updated', `Switched to ${newTheme} mode.`)
+  }
+
+  const handleSignOut = () => {
+    logout()
+    navigate('/login', { replace: true })
   }
 
   return (
@@ -50,6 +60,23 @@ export function SettingsPage() {
                 </button>
               ))}
             </div>
+          </Card>
+        </section>
+
+        <section className={styles.section} style={{ animationDelay: '150ms' }}>
+          <Card>
+            <h2 className={settingsStyles.sectionTitle}>Account</h2>
+            <p className={settingsStyles.sectionDesc}>
+              Signed in as <strong>{user?.email}</strong>
+              {user?.name ? ` (${user.name})` : ''}
+            </p>
+            <Button
+              variant="secondary"
+              icon={<LogOut size={16} />}
+              onClick={handleSignOut}
+            >
+              Sign out
+            </Button>
           </Card>
         </section>
       </div>

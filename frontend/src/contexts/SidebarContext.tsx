@@ -30,15 +30,24 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
 
   const toggle = () => setCollapsed(!collapsed)
 
-  // Auto-collapse on medium screens (1024–1279px)
+  // Responsive sidebar: auto-collapse at tablet, auto-expand at desktop
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1279px) and (min-width: 1024px)')
-    if (mq.matches) setCollapsed(true)
-    const handler = (e: MediaQueryListEvent) => {
-      if (e.matches) setCollapsed(true)
+    const tablet = window.matchMedia('(max-width: 1279px) and (min-width: 1025px)')
+    const desktop = window.matchMedia('(min-width: 1280px)')
+
+    // Apply initial state based on current viewport
+    if (tablet.matches) setCollapsed(true)
+    if (desktop.matches) setCollapsed(false)
+
+    const onTablet = (e: MediaQueryListEvent) => { if (e.matches) setCollapsed(true) }
+    const onDesktop = (e: MediaQueryListEvent) => { if (e.matches) setCollapsed(false) }
+
+    tablet.addEventListener('change', onTablet)
+    desktop.addEventListener('change', onDesktop)
+    return () => {
+      tablet.removeEventListener('change', onTablet)
+      desktop.removeEventListener('change', onDesktop)
     }
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
   }, [])
 
   return (
