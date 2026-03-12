@@ -26,6 +26,7 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.database import get_session_factory
 from app.models import Experience, ExperienceType, User
+from app.models.resume import Resume, ResumeVersion
 from app.services.auth import AuthService
 
 # ─── Constants ────────────────────────────────────────────────────────────────
@@ -361,6 +362,574 @@ _EXPERIENCES: list[dict] = [
 ]
 
 
+# ─── Seed resumes ─────────────────────────────────────────────────────────────
+# Each entry provides the top-level resume fields plus a full `sections` payload
+# that mirrors the JSONB structure used by the frontend.
+# `user_key` is the owning user's e-mail (resolved at runtime).
+
+_RESUMES: list[dict] = [
+    # ── Alex Chen — two targeted resumes ──────────────────────────────────────
+    dict(
+        user_key="alex@careerbridge.dev",
+        name="Software Engineering — Backend Focus",
+        sections=[
+            {
+                "type": "header",
+                "name": "Alex Chen",
+                "email": "alex@careerbridge.dev",
+                "phone": "415-555-0101",
+                "location": "San Francisco, CA",
+                "website": "alexchen.dev",
+                "linkedin": "linkedin.com/in/alexchen",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "Staff-level backend engineer with 8 years of experience building "
+                    "high-throughput distributed systems at Stripe and Dropbox. Deep "
+                    "expertise in Python, Go, API design, and cloud infrastructure. "
+                    "Track record of leading teams and driving platform improvements "
+                    "that measurably reduce latency and operational cost."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "alex-exp-1",
+                        "title": "Senior Software Engineer",
+                        "company": "Stripe",
+                        "location": "San Francisco, CA",
+                        "start_date": "2020-03",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Led team of 5 engineers building Stripe's developer platform.",
+                            "Drove monolith-to-microservices migration of the API gateway.",
+                            "Cut P95 API latency 40%; reduced on-call incidents 35%.",
+                        ],
+                    },
+                    {
+                        "id": "alex-exp-2",
+                        "title": "Software Engineer",
+                        "company": "Dropbox",
+                        "location": "San Francisco, CA",
+                        "start_date": "2017-06",
+                        "end_date": "2020-02",
+                        "current": False,
+                        "bullets": [
+                            "Built real-time document editing shipped to 500M+ users.",
+                            "Optimised sync engine for large files; cut sync errors 28%.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [
+                    {
+                        "id": "alex-proj-1",
+                        "name": "Internal Developer Platform",
+                        "description": "Self-service CI/CD, feature flags, and observability hub.",
+                        "technologies": ["Python", "Go", "Backstage", "Terraform", "Kubernetes"],
+                        "url": "",
+                        "bullets": [
+                            "Reduced new-service setup from 3 days to 2 hours.",
+                            "Adopted by 95% of engineering within six months of launch.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {"name": "Languages", "skills": ["Python", "Go", "TypeScript"]},
+                    {
+                        "name": "Infrastructure",
+                        "skills": ["Kubernetes", "Terraform", "AWS", "Redis"],
+                    },
+                    {
+                        "name": "Practices",
+                        "skills": ["API Design", "Distributed Systems", "SLO/SLA", "On-Call"],
+                    },
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "alex-edu-1",
+                        "institution": "UC Berkeley",
+                        "degree": "B.S.",
+                        "field": "Electrical Engineering & Computer Science",
+                        "start_date": "2013",
+                        "end_date": "2017",
+                        "gpa": "3.8",
+                    },
+                ],
+            },
+        ],
+    ),
+    dict(
+        user_key="alex@careerbridge.dev",
+        name="Technical Product Manager",
+        sections=[
+            {
+                "type": "header",
+                "name": "Alex Chen",
+                "email": "alex@careerbridge.dev",
+                "phone": "415-555-0101",
+                "location": "San Francisco, CA",
+                "linkedin": "linkedin.com/in/alexchen",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "Engineering leader transitioning to product management. 8 years "
+                    "building developer-facing products at scale. Proven ability to "
+                    "define platform strategy, align cross-functional stakeholders, and "
+                    "ship products that directly improve developer productivity."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "alex-pm-exp-1",
+                        "title": "Senior Software Engineer → Technical Lead",
+                        "company": "Stripe",
+                        "location": "San Francisco, CA",
+                        "start_date": "2020-03",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Drove roadmap for internal developer platform used by 400+ engineers.",
+                            "Coordinated delivery across 3 teams; presented strategy to VP Eng.",
+                            "Reduced onboarding time for new services from 3 days to 2 hours.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {
+                        "name": "Product",
+                        "skills": ["Roadmapping", "OKRs", "User Research", "A/B Testing"],
+                    },
+                    {
+                        "name": "Technical",
+                        "skills": ["Python", "Go", "API Design", "Distributed Systems"],
+                    },
+                    {"name": "Tools", "skills": ["Jira", "Figma", "Notion", "SQL"]},
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "alex-pm-edu-1",
+                        "institution": "UC Berkeley",
+                        "degree": "B.S.",
+                        "field": "Electrical Engineering & Computer Science",
+                        "start_date": "2013",
+                        "end_date": "2017",
+                        "gpa": "3.8",
+                    },
+                ],
+            },
+        ],
+    ),
+    # ── Priya Sharma — two targeted resumes ───────────────────────────────────
+    dict(
+        user_key="priya@careerbridge.dev",
+        name="ML Engineer",
+        sections=[
+            {
+                "type": "header",
+                "name": "Priya Sharma",
+                "email": "priya@careerbridge.dev",
+                "phone": "650-555-0202",
+                "location": "New York, NY",
+                "linkedin": "linkedin.com/in/priyasharma",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "ML Engineer and Lead Data Scientist with 7 years of experience "
+                    "designing and deploying large-scale recommendation and personalisation "
+                    "systems. Currently leading ML at Spotify. Seeking to bring a deep "
+                    "modelling background into a hands-on ML engineering role focused on "
+                    "real-time inference and platform reliability."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "priya-exp-1",
+                        "title": "Lead Data Scientist",
+                        "company": "Spotify",
+                        "location": "New York, NY",
+                        "start_date": "2021-04",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Led 6 data scientists; shipped personalisation models for 600M MAU.",
+                            "Real-time Kafka + two-tower pipeline improved home feed CTR 23%.",
+                            "Migrated training to Vertex AI; cut costs 60%, throughput 10×.",
+                        ],
+                    },
+                    {
+                        "id": "priya-exp-2",
+                        "title": "Data Analyst",
+                        "company": "Airbnb",
+                        "location": "San Francisco, CA",
+                        "start_date": "2018-08",
+                        "end_date": "2021-03",
+                        "current": False,
+                        "bullets": [
+                            "Built fraud/anomaly detection prototype; precision 91%.",
+                            "Fraud detection model reduced chargebacks by $2.4M/year.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [
+                    {
+                        "id": "priya-proj-1",
+                        "name": "Real-Time Music Recommendation Engine",
+                        "description": "Batch pipeline replaced with sub-second feature freshness.",
+                        "technologies": ["PyTorch", "Kafka", "Feature Store", "GCP"],
+                        "url": "",
+                        "bullets": [
+                            "Replaced batch pipeline; P99 serving latency held under 50ms.",
+                            "Home feed CTR improved 23% post-launch.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {
+                        "name": "ML / AI",
+                        "skills": ["PyTorch", "TensorFlow", "Scikit-learn", "XGBoost"],
+                    },
+                    {
+                        "name": "Data Engineering",
+                        "skills": ["Spark", "Kafka", "dbt", "Airflow", "SQL"],
+                    },
+                    {
+                        "name": "MLOps",
+                        "skills": ["MLflow", "Vertex AI", "Feature Store", "Docker", "GCP"],
+                    },
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "priya-edu-1",
+                        "institution": "Carnegie Mellon University",
+                        "degree": "M.S.",
+                        "field": "Machine Learning",
+                        "start_date": "2016",
+                        "end_date": "2018",
+                    },
+                    {
+                        "id": "priya-edu-2",
+                        "institution": "IIT Delhi",
+                        "degree": "B.Tech",
+                        "field": "Computer Science",
+                        "start_date": "2012",
+                        "end_date": "2016",
+                    },
+                ],
+            },
+        ],
+    ),
+    dict(
+        user_key="priya@careerbridge.dev",
+        name="Senior Data Scientist",
+        sections=[
+            {
+                "type": "header",
+                "name": "Priya Sharma",
+                "email": "priya@careerbridge.dev",
+                "phone": "650-555-0202",
+                "location": "New York, NY",
+                "linkedin": "linkedin.com/in/priyasharma",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "Senior Data Scientist with expertise in recommendation systems, "
+                    "NLP, and experimentation at scale. Led teams shipping production "
+                    "models at Spotify (600M MAU) and Airbnb. Strong background in "
+                    "A/B testing, causal inference, and stakeholder communication."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "priya-ds-exp-1",
+                        "title": "Lead Data Scientist",
+                        "company": "Spotify",
+                        "location": "New York, NY",
+                        "start_date": "2021-04",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Raised Discover Weekly stream-completion rate 18% via embeddings.",
+                            "Shipped 4 production models in 2023; managed roadmap and reviews.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {
+                        "name": "Data Science",
+                        "skills": [
+                            "Python",
+                            "PyTorch",
+                            "Scikit-learn",
+                            "Statistics",
+                            "A/B Testing",
+                        ],
+                    },
+                    {"name": "Data", "skills": ["SQL", "Spark", "dbt", "Looker"]},
+                    {
+                        "name": "Communication",
+                        "skills": [
+                            "Executive Presentations",
+                            "Roadmapping",
+                            "Cross-Functional Alignment",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "priya-ds-edu-1",
+                        "institution": "Carnegie Mellon University",
+                        "degree": "M.S.",
+                        "field": "Machine Learning",
+                        "start_date": "2016",
+                        "end_date": "2018",
+                    },
+                ],
+            },
+        ],
+    ),
+    # ── Marcus Johnson — two targeted resumes ─────────────────────────────────
+    dict(
+        user_key="marcus@careerbridge.dev",
+        name="Platform Engineering",
+        sections=[
+            {
+                "type": "header",
+                "name": "Marcus Johnson",
+                "email": "marcus@careerbridge.dev",
+                "phone": "206-555-0303",
+                "location": "Seattle, WA",
+                "linkedin": "linkedin.com/in/marcusjohnson",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "Staff Platform Engineer with 10 years of experience owning "
+                    "large-scale deployment platforms, developer tooling, and cloud "
+                    "infrastructure. Built the system that deploys GitHub.com tens of "
+                    "thousands of times per year. Expert in Kubernetes, GitOps, and IaC."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "marcus-exp-1",
+                        "title": "Staff DevOps Engineer",
+                        "company": "GitHub",
+                        "location": "Seattle, WA (Remote)",
+                        "start_date": "2019-02",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Owned platform deploying GitHub.com 10,000+ times per year.",
+                            "Cut mean deploy time 45→8 min; 99.998% deployment success rate.",
+                            "IaC migration: 340 resources to Terraform, 2 weeks→1 hour.",
+                        ],
+                    },
+                    {
+                        "id": "marcus-exp-2",
+                        "title": "Site Reliability Engineer",
+                        "company": "Twitter",
+                        "location": "San Francisco, CA",
+                        "start_date": "2016-05",
+                        "end_date": "2019-01",
+                        "current": False,
+                        "bullets": [
+                            "Owned SLOs for home timeline service (3,000 rps peak).",
+                            "Improved availability 99.85%→99.97%; cut MTTR by 55%.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [
+                    {
+                        "id": "marcus-proj-1",
+                        "name": "Zero-Downtime Continuous Deployment Pipeline",
+                        "description": "Canary: auto-rollback and real-time traffic shifting.",
+                        "technologies": ["ArgoCD", "Argo Rollouts", "Kubernetes", "Go"],
+                        "url": "",
+                        "bullets": [
+                            "Replaced Capistrano; deployment cycle shortened by 82%.",
+                            "Zero pipeline-attributable incidents in its first year.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {
+                        "name": "Orchestration",
+                        "skills": ["Kubernetes", "ArgoCD", "Argo Rollouts", "Helm"],
+                    },
+                    {"name": "IaC & Cloud", "skills": ["Terraform", "AWS", "GCP", "Pulumi"]},
+                    {
+                        "name": "Observability",
+                        "skills": ["Prometheus", "Grafana", "Jaeger", "OpenTelemetry"],
+                    },
+                    {"name": "Languages", "skills": ["Go", "Python", "Bash"]},
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "marcus-edu-1",
+                        "institution": "University of Washington",
+                        "degree": "B.S.",
+                        "field": "Computer Science",
+                        "start_date": "2012",
+                        "end_date": "2016",
+                    },
+                ],
+            },
+        ],
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        name="Staff Site Reliability Engineer",
+        sections=[
+            {
+                "type": "header",
+                "name": "Marcus Johnson",
+                "email": "marcus@careerbridge.dev",
+                "phone": "206-555-0303",
+                "location": "Seattle, WA",
+                "linkedin": "linkedin.com/in/marcusjohnson",
+            },
+            {
+                "type": "summary",
+                "content": (
+                    "Staff SRE with a decade of experience owning reliability for "
+                    "high-traffic consumer systems. Deep background in SLO frameworks, "
+                    "incident management, observability, and capacity planning. Strong "
+                    "communicator who bridges engineering and business risk."
+                ),
+            },
+            {
+                "type": "experience",
+                "entries": [
+                    {
+                        "id": "marcus-sre-exp-1",
+                        "title": "Staff DevOps Engineer",
+                        "company": "GitHub",
+                        "location": "Seattle, WA (Remote)",
+                        "start_date": "2019-02",
+                        "end_date": None,
+                        "current": True,
+                        "bullets": [
+                            "Defined SLO strategy; 99.998% success rate over 18 months.",
+                            "On-call lead for critical deploys; drove MTTR below 5 min.",
+                        ],
+                    },
+                    {
+                        "id": "marcus-sre-exp-2",
+                        "title": "Site Reliability Engineer",
+                        "company": "Twitter",
+                        "location": "San Francisco, CA",
+                        "start_date": "2016-05",
+                        "end_date": "2019-01",
+                        "current": False,
+                        "bullets": [
+                            "Home timeline availability improved from 99.85% to 99.97%.",
+                            "Led blameless post-mortem culture adoption across the Timelines team.",
+                        ],
+                    },
+                ],
+            },
+            {
+                "type": "projects",
+                "entries": [],
+            },
+            {
+                "type": "skills",
+                "categories": [
+                    {
+                        "name": "Reliability",
+                        "skills": [
+                            "SLO/SLA",
+                            "Error Budgets",
+                            "Incident Command",
+                            "Chaos Engineering",
+                        ],
+                    },
+                    {
+                        "name": "Observability",
+                        "skills": ["Prometheus", "Grafana", "Jaeger", "PagerDuty"],
+                    },
+                    {"name": "Infrastructure", "skills": ["Kubernetes", "AWS", "Terraform"]},
+                ],
+            },
+            {
+                "type": "education",
+                "entries": [
+                    {
+                        "id": "marcus-sre-edu-1",
+                        "institution": "University of Washington",
+                        "degree": "B.S.",
+                        "field": "Computer Science",
+                        "start_date": "2012",
+                        "end_date": "2016",
+                    },
+                ],
+            },
+        ],
+    ),
+]
+
+
 # ─── Seed runner ──────────────────────────────────────────────────────────────
 
 
@@ -440,6 +1009,56 @@ async def _run() -> None:
 
         skipped = len(planned) - inserted
         print(f"  {inserted} inserted, {skipped} already existed ({len(planned)} total)")
+
+        # ── Resumes ────────────────────────────────────────────────────────────
+        print()
+        print("─── Resumes ─────────────────────────────────────────────────────")
+
+        resume_planned: list[tuple[uuid.UUID, dict]] = []
+        for r in _RESUMES:
+            user_id = user_ids[r["user_key"]]
+            resume_id = _seed_uuid(str(user_id), "resume", r["name"])
+            resume_planned.append((resume_id, r))
+
+        existing_resume_result = await session.execute(
+            select(Resume.id).where(Resume.id.in_([rid for rid, _ in resume_planned]))
+        )
+        existing_resume_ids = {row[0] for row in existing_resume_result}
+
+        resumes_inserted = 0
+        for resume_id, r in resume_planned:
+            if resume_id in existing_resume_ids:
+                continue
+            user_id = user_ids[r["user_key"]]
+            resume = Resume(
+                id=resume_id,
+                user_id=user_id,
+                name=r["name"],
+                version=1,
+                sections=r["sections"],
+                created_at=now,
+                updated_at=now,
+            )
+            session.add(resume)
+            # Initial version snapshot
+            version = ResumeVersion(
+                id=_seed_uuid(str(resume_id), "version", "1"),
+                resume_id=resume_id,
+                version=1,
+                name=r["name"],
+                sections=r["sections"],
+                created_at=now,
+            )
+            session.add(version)
+            resumes_inserted += 1
+
+        await session.commit()
+
+        resumes_skipped = len(resume_planned) - resumes_inserted
+        print(
+            f"  {resumes_inserted} inserted, {resumes_skipped} already existed "
+            f"({len(resume_planned)} total)"
+        )
 
     # ── Summary ────────────────────────────────────────────────────────────────
     print()
