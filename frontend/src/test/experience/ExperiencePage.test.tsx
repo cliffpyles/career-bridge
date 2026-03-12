@@ -2,7 +2,7 @@
  * Integration tests for the ExperiencePage.
  * Uses MSW to serve fixture data via TanStack Query.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, within } from '../utils'
 import { MemoryRouter } from 'react-router'
 import { ExperiencePage } from '../../pages/ExperiencePage'
