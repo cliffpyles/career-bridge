@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: career-bridge-config
+  namespace: career-bridge
+  labels:
+    app.kubernetes.io/name: career-bridge
+data:
+  ENVIRONMENT: "production"
+  DEBUG: "false"
+  AI_PROVIDER: "openai"
+  REDIS_URL: "redis://redis:6379/0"
+  # DATABASE_URL and SECRET_KEY are in the Secret manifest — not here

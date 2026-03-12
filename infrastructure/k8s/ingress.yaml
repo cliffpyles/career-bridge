@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: career-bridge-ingress
+  namespace: career-bridge
+  labels:
+    app.kubernetes.io/name: career-bridge
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "false"
+    # Configure with your domain and TLS certificate
+    # networking.gke.io/managed-certificates: "career-bridge-cert"
+spec:
+  rules:
+    - host: career-bridge.example.com  # Replace with your domain
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: career-bridge-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
