@@ -6,52 +6,83 @@ A career transition management app — track applications, build tailored resume
 
 ```
 career-bridge/
-  frontend/          # React 19 + TypeScript + Vite app
-  backend/           # FastAPI + PostgreSQL backend (Phase 1+)
-  infrastructure/    # devenv config, Nix OCI image builds, GKE manifests (Phase 1+)
-  scripts/           # Dev, migration, and data utilities (Phase 1+)
+  frontend/          # React 19 + TypeScript + Vite SPA
+  backend/           # FastAPI + PostgreSQL API server
+  infrastructure/    # devenv config, Nix OCI image builds, GKE manifests
+  scripts/           # Dev, migration, and data utilities
   planning/          # Product design docs and notes
 ```
 
 ## Tech Stack
 
-| Layer          | Technology                                              |
-| -------------- | ------------------------------------------------------- |
-| Frontend       | React 19, TypeScript, Vite 7, TanStack Query, React Router v7 (Data Mode) |
-| Backend        | Python, FastAPI, Pydantic v2, SQLModel, Alembic         |
-| Database       | PostgreSQL                                              |
-| Cache / Queue  | Redis + Celery                                          |
-| AI             | OpenAI + Anthropic (provider-abstracted)                |
-| Local Dev      | devenv (Nix) — reproducible env with all runtimes and services      |
-| Build          | Nix — lean OCI container images, no Docker daemon needed            |
-| Production     | Google GKE — standard managed Linux nodes, Google Artifact Registry |
+| Layer         | Technology                                                          |
+| ------------- | ------------------------------------------------------------------- |
+| Frontend      | React 19, TypeScript, Vite 7, React Router v7 (Data Mode), TanStack Query, CSS Modules |
+| Component lib | Lucide icons, custom design-token system (light/dark themes)        |
+| Mocking       | MSW v2 (browser + Node)                                             |
+| Frontend test | Vitest + React Testing Library                                      |
+| Backend       | Python, FastAPI, Pydantic v2, SQLModel, Alembic                     |
+| Database      | PostgreSQL 16                                                       |
+| Cache / Queue | Redis 7 + Celery                                                    |
+| AI            | OpenAI + Anthropic (provider-abstracted via `AIService`)            |
+| Local dev     | devenv (Nix) — PostgreSQL, Redis, backend, frontend via process-compose |
+| Build         | Nix — lean OCI container images, no Docker daemon needed            |
+| Production    | Google GKE, Google Artifact Registry                                |
 
 ## Getting Started
 
-### Frontend
+### Option A — Full stack via devenv (recommended)
+
+[Install devenv](https://devenv.sh/getting-started/), then from the project root:
+
+```bash
+devenv up
+```
+
+This starts PostgreSQL 16, Redis 7, the FastAPI backend (`:8000`), and the Vite dev server (`:5173`) together using process-compose. All runtimes and services are pinned by Nix — no global installs required.
+
+See [`infrastructure/README.md`](infrastructure/README.md) for details.
+
+### Option B — Frontend only
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev          # http://localhost:5173
 ```
 
-The dev server starts at `http://localhost:5173`.
+In development mode all `/api/*` requests are intercepted by MSW stubs, so the frontend runs fully without a backend.
 
-| Command           | Description                        |
-| ----------------- | ---------------------------------- |
-| `npm run dev`     | Start Vite dev server with HMR     |
-| `npm run build`   | Type-check and produce `dist/`     |
-| `npm run lint`    | Run ESLint                         |
-| `npm run preview` | Preview the production build       |
+| Command                | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `npm run dev`          | Start Vite dev server with HMR            |
+| `npm run build`        | Type-check and produce `dist/`            |
+| `npm run lint`         | Run ESLint                                |
+| `npm run preview`      | Serve the production build locally        |
+| `npm test`             | Run Vitest test suite (74 tests)          |
+| `npm run test:watch`   | Vitest in watch mode                      |
+| `npm run test:coverage`| Coverage report via v8                   |
 
-### Backend
+See [`frontend/README.md`](frontend/README.md) for the full component and architecture guide.
 
-> Coming in Phase 1. See [`backend/README.md`](backend/README.md).
+### Option C — Backend only
 
-### Full Stack (devenv)
+```bash
+cd backend
+pip install -r requirements.txt
 
-> Coming in Phase 1. Run `devenv up` from the project root to start PostgreSQL, Redis, the backend server, and the frontend dev server together. See [`infrastructure/README.md`](infrastructure/README.md).
+# Set required environment variables (see backend/README.md)
+export DATABASE_URL="postgresql+asyncpg://user:pass@localhost:5432/careerbridge"
+export SECRET_KEY="change-me"
+
+# Run database migrations
+alembic upgrade head
+
+# Start the dev server
+uvicorn app.main:app --reload   # http://localhost:8000
+```
+
+See [`backend/README.md`](backend/README.md) for the full setup guide.
 
 ## Development Plan
 
