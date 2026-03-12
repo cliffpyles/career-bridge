@@ -6,6 +6,7 @@ import { SavedJobsPage } from './pages/SavedJobsPage'
 import { AlertsPage } from './pages/AlertsPage'
 import { ApplicationsPage } from './pages/ApplicationsPage'
 import { ResumesPage } from './pages/ResumesPage'
+import { ResumeEditorPage } from './pages/ResumeEditorPage'
 import { ExperiencePage } from './pages/ExperiencePage'
 import { InterviewsPage } from './pages/InterviewsPage'
 import { SettingsPage } from './pages/SettingsPage'
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: 'alerts', Component: AlertsPage },
       { path: 'applications', Component: ApplicationsPage },
       { path: 'resumes', Component: ResumesPage },
+      { path: 'resumes/:id', Component: ResumeEditorPage },
       { path: 'experience', Component: ExperiencePage },
       { path: 'interviews', Component: InterviewsPage },
       { path: 'settings', Component: SettingsPage },

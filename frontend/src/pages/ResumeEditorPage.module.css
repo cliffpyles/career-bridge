@@ -1,0 +1,161 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ── Top bar actions ──────────────────────────────────── */
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.versionLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* ── Save error banner ────────────────────────────────── */
+
+.saveError {
+  padding: var(--space-3) var(--space-6);
+  background: color-mix(in srgb, var(--accent-danger) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-danger) 25%, transparent);
+  font-size: var(--text-sm);
+  color: var(--accent-danger);
+  text-align: center;
+}
+
+/* ── Split view ───────────────────────────────────────── */
+
+.splitView {
+  flex: 1;
+  display: grid;
+  /* CSS variable drives the split ratio; updated by drag handler */
+  grid-template-columns: calc(var(--split-ratio) * 100% - 4px) 8px 1fr;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Editor pane ──────────────────────────────────────── */
+
+.editorPane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.editorScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.resumeName {
+  /* Sits above the section accordions */
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+}
+
+/* ── Drag handle ──────────────────────────────────────── */
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  background: var(--surface-secondary);
+  border-left: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  transition: background 150ms ease;
+  z-index: 1;
+}
+
+.dragHandle:hover,
+.dragHandle:focus-visible {
+  background: var(--surface-tertiary);
+  outline: none;
+}
+
+.dragHandleBar {
+  width: 2px;
+  height: 32px;
+  border-radius: 2px;
+  background: var(--border-default);
+  transition: background 150ms ease;
+}
+
+.dragHandle:hover .dragHandleBar,
+.dragHandle:focus-visible .dragHandleBar {
+  background: var(--accent-primary);
+}
+
+/* ── Preview pane ─────────────────────────────────────── */
+
+.previewPane {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Skeleton states ──────────────────────────────────── */
+
+.skeletonSection {
+  padding: var(--space-5);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+
+.skeletonPreview {
+  padding: var(--space-8) var(--space-10);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  margin: var(--space-6);
+}
+
+/* ── Error page ───────────────────────────────────────── */
+
+.errorPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* ── Responsive: stack on mobile ──────────────────────── */
+
+@media (max-width: 1024px) {
+  .splitView {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    overflow-y: auto;
+  }
+
+  .dragHandle {
+    display: none;
+  }
+
+  .previewPane {
+    display: none;
+  }
+}

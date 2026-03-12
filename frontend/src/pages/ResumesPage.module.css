@@ -1,0 +1,120 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.pageContent {
+  flex: 1;
+  padding: var(--space-8) var(--space-6);
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Page header ──────────────────────────────────────── */
+
+.pageHeader {
+  margin-bottom: var(--space-8);
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) both;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl-lh);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: var(--space-2) 0 0;
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+/* ── Content / grid ───────────────────────────────────── */
+
+.content {
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) 50ms both;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.gridItem {
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) both;
+}
+
+.skeletonCard {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-5);
+}
+
+/* ── Error state ──────────────────────────────────────── */
+
+.errorMessage {
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--accent-danger) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-danger) 25%, transparent);
+  border-left: 3px solid var(--accent-danger);
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  color: var(--accent-danger);
+  line-height: 1.5;
+}
+
+/* ── Modal footer ─────────────────────────────────────── */
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+/* ── Animations ───────────────────────────────────────── */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
