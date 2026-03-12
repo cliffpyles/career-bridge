@@ -1,0 +1,46 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100dvh;
+  transition: grid-template-columns var(--duration-slow) var(--ease-default);
+}
+
+.sidebarCollapsed {
+  grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+}
+
+.main {
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: var(--surface-ground);
+}
+
+/* Top progress bar during navigation */
+.progressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-primary);
+  z-index: 100;
+  animation: progressSlide 1.5s ease-in-out infinite;
+}
+
+@keyframes progressSlide {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  50%  { transform: scaleX(0.7); transform-origin: left; }
+  100% { transform: scaleX(1); transform-origin: left; opacity: 0; }
+}
+
+/* Mobile: no sidebar, add bottom padding for nav */
+@media (max-width: 1024px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding-bottom: var(--bottom-nav-height);
+  }
+}
