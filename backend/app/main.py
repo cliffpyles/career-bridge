@@ -1,15 +1,16 @@
 """
 FastAPI application factory.
 """
-from contextlib import asynccontextmanager
+
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
-from app.routers import health, auth
+from app.routers import auth, experiences, health
 
 settings = get_settings()
 
@@ -52,6 +53,7 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(health.router, prefix="/api")
     app.include_router(auth.router, prefix="/api")
+    app.include_router(experiences.router, prefix="/api")
 
     return app
 
