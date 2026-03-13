@@ -128,6 +128,23 @@ uvicorn app.main:app --reload
 
 ## API Endpoints
 
+### AI (Phase 6)
+
+| Method | Path                    | Auth   | Description                                            |
+| ------ | ----------------------- | ------ | ------------------------------------------------------ |
+| POST   | `/ai/generate-resume`   | Bearer | Stream resume generation progress as Server-Sent Events |
+
+**`POST /ai/generate-resume`** accepts `{"job_description": "...", "name": "..."}` and returns a
+`text/event-stream` response. Each line is `data: <JSON>` where JSON is one of:
+
+| Event shape | Description |
+|-------------|-------------|
+| `{"token": "text"}` | Incremental progress text to display to the user |
+| `{"type": "complete", "resume": {"name": "...", "sections": [...]}}` | Final generated resume |
+| `{"type": "error", "message": "..."}` | Generation failed; surface message and offer retry |
+
+The stream always ends with `data: [DONE]`.
+
 ### Health
 
 | Method | Path      | Auth | Description                             |
