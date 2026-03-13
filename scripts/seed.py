@@ -30,6 +30,7 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.database import get_session_factory
 from app.models import Experience, ExperienceType, User
+from app.models.application import Application, ApplicationEvent, ApplicationStatus
 from app.models.resume import Resume, ResumeVersion
 from app.services.auth import AuthService
 
@@ -994,6 +995,276 @@ _RESUMES: list[dict] = [
 ]
 
 
+# ─── Seed applications ────────────────────────────────────────────────────────
+# 3 applications per user spread across different pipeline stages.
+# At least one per user has an overdue next_action_date, and at least one
+# has a next_action_date within 3 days — exercising Phase 5 dashboard logic.
+#
+# `resume_key` resolves to a deterministic resume_id at runtime.
+# `events` is a list of event dicts that will be inserted for each application.
+
+_today = date.today()
+
+
+def _days(n: int) -> date:
+    """Return a date relative to today."""
+    from datetime import timedelta
+
+    return _today + timedelta(days=n)
+
+
+_APPLICATIONS: list[dict] = [
+    # ── Alex Chen ──────────────────────────────────────────────────────────────
+    dict(
+        user_key="alex@careerbridge.dev",
+        company="Notion",
+        role="Staff Software Engineer",
+        url="https://www.notion.so/careers",
+        status=ApplicationStatus.PHONE_SCREEN,
+        applied_date=_days(-18),
+        next_action="Technical interview",
+        next_action_date=_days(2),  # within 3 days — upcoming
+        resume_key=(
+            "alex@careerbridge.dev",
+            "resume",
+            "Software Engineering — Backend Focus",
+        ),
+        notes="Strong interest in the platform team. Recruiter was enthusiastic.",
+        events=[
+            dict(
+                event_type="Phone Screen",
+                date=_days(-10),
+                notes=(
+                    "30-minute call with Sarah (recruiter). Team is hiring for the "
+                    "platform infra org. Very positive conversation."
+                ),
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-18),
+                notes="Applied via Notion careers page. Used backend-focused resume.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="alex@careerbridge.dev",
+        company="Vercel",
+        role="Principal Engineer, Infrastructure",
+        url="https://vercel.com/careers",
+        status=ApplicationStatus.APPLIED,
+        applied_date=_days(-5),
+        next_action="Follow up if no response",
+        next_action_date=_days(-2),  # overdue
+        resume_key=(
+            "alex@careerbridge.dev",
+            "resume",
+            "Software Engineering — Backend Focus",
+        ),
+        notes=None,
+        events=[
+            dict(
+                event_type="Applied",
+                date=_days(-5),
+                notes="Submitted via LinkedIn Easy Apply.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="alex@careerbridge.dev",
+        company="Figma",
+        role="Technical Program Manager",
+        url="https://figma.com/careers",
+        status=ApplicationStatus.ONSITE,
+        applied_date=_days(-30),
+        next_action="On-site interview",
+        next_action_date=_days(5),
+        resume_key=("alex@careerbridge.dev", "resume", "Technical Product Manager"),
+        notes="On-site with 4 panels. System design + behavioural + PM case.",
+        events=[
+            dict(
+                event_type="Technical Interview",
+                date=_days(-12),
+                notes="90-minute systems design round. Went well.",
+            ),
+            dict(
+                event_type="Recruiter Call",
+                date=_days(-25),
+                notes="Quick intro — confirmed compensation range is aligned.",
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-30),
+                notes="Referred by former colleague.",
+            ),
+        ],
+    ),
+    # ── Priya Sharma ───────────────────────────────────────────────────────────
+    dict(
+        user_key="priya@careerbridge.dev",
+        company="Anthropic",
+        role="ML Engineer, Model Serving",
+        url="https://anthropic.com/careers",
+        status=ApplicationStatus.TECHNICAL,
+        applied_date=_days(-20),
+        next_action="Take-home assessment",
+        next_action_date=_days(1),  # within 3 days — upcoming
+        resume_key=("priya@careerbridge.dev", "resume", "ML Engineer"),
+        notes="4-hour take-home on distributed inference serving. Deadline tomorrow.",
+        events=[
+            dict(
+                event_type="Technical Screen",
+                date=_days(-8),
+                notes=(
+                    "Live coding session. Two LeetCode-style questions (one medium, "
+                    "one hard). Passed both."
+                ),
+            ),
+            dict(
+                event_type="Recruiter Call",
+                date=_days(-15),
+                notes="Confirmed level is L5. Comp band: $280-320k TC.",
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-20),
+                notes="Applied through company careers portal.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="priya@careerbridge.dev",
+        company="Cohere",
+        role="Senior ML Engineer",
+        url="https://cohere.com/careers",
+        status=ApplicationStatus.APPLIED,
+        applied_date=_days(-7),
+        next_action="Follow up with recruiter",
+        next_action_date=_days(-1),  # overdue
+        resume_key=("priya@careerbridge.dev", "resume", "ML Engineer"),
+        notes=None,
+        events=[
+            dict(
+                event_type="Applied",
+                date=_days(-7),
+                notes="Cold application through LinkedIn.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="priya@careerbridge.dev",
+        company="Hugging Face",
+        role="Staff Data Scientist",
+        url="https://huggingface.co/jobs",
+        status=ApplicationStatus.OFFER,
+        applied_date=_days(-45),
+        next_action="Review offer package",
+        next_action_date=_days(3),
+        resume_key=("priya@careerbridge.dev", "resume", "Senior Data Scientist"),
+        notes="Offer received: $220k base + 0.3% equity. Decision needed by end of week.",
+        events=[
+            dict(
+                event_type="Offer Received",
+                date=_days(-2),
+                notes="Verbal offer extended. $220k + 0.3% equity + $30k signing.",
+            ),
+            dict(
+                event_type="Final Interview",
+                date=_days(-10),
+                notes="4-hour virtual on-site. Research presentation + 3 technical panels.",
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-45),
+                notes="Direct outreach via Twitter/X. Got fast-tracked.",
+            ),
+        ],
+    ),
+    # ── Marcus Johnson ──────────────────────────────────────────────────────────
+    dict(
+        user_key="marcus@careerbridge.dev",
+        company="Cloudflare",
+        role="Staff Platform Engineer",
+        url="https://cloudflare.com/careers",
+        status=ApplicationStatus.PHONE_SCREEN,
+        applied_date=_days(-12),
+        next_action="Engineering manager call",
+        next_action_date=_days(2),  # within 3 days — upcoming
+        resume_key=("marcus@careerbridge.dev", "resume", "Platform Engineering"),
+        notes="Strong edge-computing team. Role is focused on their Workers runtime platform.",
+        events=[
+            dict(
+                event_type="Recruiter Screen",
+                date=_days(-4),
+                notes="15-minute call. Confirmed role and team fit. Moving to EM screen.",
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-12),
+                notes="Applied via Cloudflare careers page.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        company="HashiCorp",
+        role="Senior SRE",
+        url="https://hashicorp.com/careers",
+        status=ApplicationStatus.APPLIED,
+        applied_date=_days(-9),
+        next_action="Follow up if no response by Friday",
+        next_action_date=_days(-3),  # overdue
+        resume_key=(
+            "marcus@careerbridge.dev",
+            "resume",
+            "Staff Site Reliability Engineer",
+        ),
+        notes=None,
+        events=[
+            dict(
+                event_type="Applied",
+                date=_days(-9),
+                notes="Applied via LinkedIn. Role posted 2 weeks ago.",
+            ),
+        ],
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        company="GitHub",
+        role="Principal Platform Engineer",
+        url="https://github.com/careers",
+        status=ApplicationStatus.ONSITE,
+        applied_date=_days(-35),
+        next_action="On-site (virtual) loop",
+        next_action_date=_days(6),
+        resume_key=("marcus@careerbridge.dev", "resume", "Platform Engineering"),
+        notes=(
+            "Internal referral from former teammate. 5-panel loop: "
+            "system design, culture, coding, architecture, skip-level."
+        ),
+        events=[
+            dict(
+                event_type="Technical Interview",
+                date=_days(-14),
+                notes=(
+                    "Deep-dive systems design: design a zero-downtime deploy system "
+                    "at GitHub scale. Felt confident."
+                ),
+            ),
+            dict(
+                event_type="Recruiter Call",
+                date=_days(-28),
+                notes="Recruiting team confirmed this is a net-new headcount role.",
+            ),
+            dict(
+                event_type="Applied",
+                date=_days(-35),
+                notes="Internal referral. Applied via employee referral portal.",
+            ),
+        ],
+    ),
+]
+
+
 # ─── Seed runner ──────────────────────────────────────────────────────────────
 
 
@@ -1125,6 +1396,89 @@ async def _run() -> None:
             f"  {resumes_inserted} inserted, {resumes_skipped} already existed "
             f"({len(resume_planned)} total)"
         )
+
+        # Build a lookup: (user_email, "resume", resume_name) -> resume_id
+        resume_id_by_key: dict[tuple[str, str, str], uuid.UUID] = {}
+        for resume_id, r in resume_planned:
+            resume_id_by_key[(r["user_key"], "resume", r["name"])] = resume_id
+
+        # ── Applications ───────────────────────────────────────────────────────
+        print()
+        print("─── Applications ────────────────────────────────────────────────")
+
+        app_planned: list[tuple[uuid.UUID, dict]] = []
+        for app in _APPLICATIONS:
+            user_id = user_ids[app["user_key"]]
+            app_id = _seed_uuid(
+                str(user_id), "application", app["company"], app["role"]
+            )
+            app_planned.append((app_id, app))
+
+        existing_app_result = await session.execute(
+            select(Application.id).where(
+                Application.id.in_([aid for aid, _ in app_planned])
+            )
+        )
+        existing_app_ids = {row[0] for row in existing_app_result}
+
+        apps_inserted = 0
+        for app_id, app in app_planned:
+            if app_id in existing_app_ids:
+                continue
+            user_id = user_ids[app["user_key"]]
+            resume_id = resume_id_by_key.get(app["resume_key"])
+            session.add(
+                Application(
+                    id=app_id,
+                    user_id=user_id,
+                    company=app["company"],
+                    role=app["role"],
+                    url=app.get("url"),
+                    status=app["status"],
+                    applied_date=app["applied_date"],
+                    next_action=app.get("next_action"),
+                    next_action_date=app.get("next_action_date"),
+                    resume_id=resume_id,
+                    notes=app.get("notes"),
+                    created_at=now,
+                    updated_at=now,
+                )
+            )
+            apps_inserted += 1
+
+        await session.commit()
+
+        apps_skipped = len(app_planned) - apps_inserted
+        print(
+            f"  {apps_inserted} inserted, {apps_skipped} already existed "
+            f"({len(app_planned)} total)"
+        )
+
+        # ── Application Events ─────────────────────────────────────────────────
+        print()
+        print("─── Application Events ──────────────────────────────────────────")
+
+        events_inserted = 0
+        for app_id, app in app_planned:
+            for i, ev in enumerate(app.get("events", [])):
+                event_id = _seed_uuid(str(app_id), "event", str(i))
+                existing_ev = await session.get(ApplicationEvent, event_id)
+                if existing_ev:
+                    continue
+                session.add(
+                    ApplicationEvent(
+                        id=event_id,
+                        application_id=app_id,
+                        event_type=ev["event_type"],
+                        event_date=ev["date"],
+                        notes=ev.get("notes"),
+                        created_at=now,
+                    )
+                )
+                events_inserted += 1
+
+        await session.commit()
+        print(f"  {events_inserted} inserted")
 
     # ── Summary ────────────────────────────────────────────────────────────────
     print()

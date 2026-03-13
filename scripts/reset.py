@@ -30,9 +30,14 @@ async def _run() -> None:
     async with factory() as session:
         print("─── Resetting database ──────────────────────────────────────────")
         # Truncate in dependency order (children before parents).
+        # application_events must come before applications (FK constraint).
+        # applications must come before resumes (resume_id FK).
         await session.execute(
             text(
-                "TRUNCATE TABLE resume_versions, resumes, experiences, users"
+                "TRUNCATE TABLE"
+                " application_events, applications,"
+                " resume_versions, resumes,"
+                " experiences, users"
                 " RESTART IDENTITY CASCADE"
             )
         )

@@ -8,8 +8,11 @@ registered as devenv commands and run inside the devenv shell.
 ### `seed.py` — Seed the database
 
 Populates the database with realistic mock data for all three seed users:
-users, experiences, and resumes. Safe to run multiple times — uses
-deterministic UUIDs so existing records are left untouched.
+users, experiences, resumes, applications, and application events. Safe to
+run multiple times — uses deterministic UUIDs so existing records are left
+untouched. Application fixtures include entries spread across different
+pipeline stages, with at least one overdue and one upcoming next action per
+user (exercising Phase 5 dashboard logic).
 
 ```bash
 devenv shell -- seed
@@ -17,8 +20,9 @@ devenv shell -- seed
 
 ### `reset.py` — Reset the database
 
-Truncates all user data (resume_versions, resumes, experiences, users) and
-re-seeds from scratch. Useful when you want a clean, known-good state.
+Truncates all user data (application_events, applications, resume_versions,
+resumes, experiences, users) and re-seeds from scratch. Useful when you want
+a clean, known-good state.
 
 ```bash
 devenv shell -- reset
