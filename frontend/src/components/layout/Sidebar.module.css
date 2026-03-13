@@ -155,6 +155,30 @@
   padding: var(--space-2);
 }
 
+/* Tablet: force icon-only regardless of JS collapsed state */
+@media (max-width: 1279px) and (min-width: 1025px) {
+  .sidebar {
+    width: var(--sidebar-collapsed-width);
+  }
+
+  .sidebar .navItem {
+    justify-content: center;
+    padding: var(--space-2);
+    margin: 1px var(--space-2);
+  }
+
+  .sidebar .collapseToggle {
+    justify-content: center;
+    padding: var(--space-2);
+  }
+
+  .sidebar .wordmarkText,
+  .sidebar .sectionLabel,
+  .sidebar .navLabel {
+    display: none;
+  }
+}
+
 /* Hide sidebar on mobile */
 @media (max-width: 1024px) {
   .sidebar {

@@ -10,14 +10,21 @@ const SidebarContext = createContext<SidebarContextValue | null>(null)
 
 const STORAGE_KEY = 'career-bridge-sidebar-collapsed'
 
+function getInitialCollapsed(): boolean {
+  if (typeof window === 'undefined') return false
+  // Viewport rules take priority over localStorage
+  if (window.matchMedia('(max-width: 1279px) and (min-width: 1025px)').matches) return true
+  if (window.matchMedia('(min-width: 1280px)').matches) return false
+  // Mobile (<1025px): sidebar is hidden anyway, use localStorage
+  try {
+    return localStorage.getItem(STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsedState] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === 'true'
-    } catch {
-      return false
-    }
-  })
+  const [collapsed, setCollapsedState] = useState<boolean>(getInitialCollapsed)
 
   const setCollapsed = (v: boolean) => {
     setCollapsedState(v)

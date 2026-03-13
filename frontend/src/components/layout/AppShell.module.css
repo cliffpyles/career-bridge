@@ -11,8 +11,8 @@
 
 .main {
   position: relative;
+  grid-column: 2;
   min-height: 100dvh;
-  overflow-x: hidden;
   background: var(--surface-ground);
 }
 
@@ -40,6 +40,13 @@
   background: var(--surface-ground);
 }
 
+/* Tablet: force collapsed sidebar regardless of JS state */
+@media (max-width: 1279px) and (min-width: 1025px) {
+  .shell {
+    grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+  }
+}
+
 /* Mobile: no sidebar, add bottom padding for nav */
 @media (max-width: 1024px) {
   .shell {
@@ -47,6 +54,7 @@
   }
 
   .main {
+    grid-column: 1;
     padding-bottom: var(--bottom-nav-height);
   }
 }

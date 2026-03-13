@@ -14,8 +14,13 @@ export default defineConfig({
   },
   css: {
     modules: {
-      // Use plain local names in tests so class assertions like toHaveClass('primary') work
-      generateScopedName: (name: string) => name,
+      // In tests (VITEST env var set), use plain local names so class assertions like
+      // toHaveClass('page') work. In dev/build, scope names to avoid cross-module conflicts.
+      generateScopedName: (name: string, filename: string) => {
+        if (process.env.VITEST) return name
+        const file = filename.split('/').pop()?.replace('.module.css', '') ?? 'unknown'
+        return `${file}_${name}`
+      },
     },
   },
   test: {
