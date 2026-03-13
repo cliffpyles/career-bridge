@@ -27,9 +27,11 @@ async def _run() -> None:
     async with factory() as session:
         print("─── Wiping database ─────────────────────────────────────────────")
         # Truncate in dependency order (children before parents).
+        # saved_jobs must come before jobs (FK: saved_jobs.job_id → jobs.id).
         await session.execute(
             text(
                 "TRUNCATE TABLE"
+                " saved_jobs, jobs,"
                 " application_events, applications,"
                 " resume_versions, resumes,"
                 " experiences, users"

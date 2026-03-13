@@ -31,6 +31,7 @@ from app.config import get_settings
 from app.database import get_session_factory
 from app.models import Experience, ExperienceType, User
 from app.models.application import Application, ApplicationEvent, ApplicationStatus
+from app.models.job import Job, RemoteType, SavedJob
 from app.models.resume import Resume, ResumeVersion
 from app.services.auth import AuthService
 
@@ -1265,6 +1266,368 @@ _APPLICATIONS: list[dict] = [
 ]
 
 
+# ─── Seed jobs ────────────────────────────────────────────────────────────────
+# 15 sample jobs covering varied titles, companies, locations, remote types,
+# and salary ranges.  Deterministic IDs keyed on title + company.
+
+_JOBS: list[dict] = [
+    dict(
+        title="Senior Frontend Engineer",
+        company="Stripe",
+        location="New York, NY",
+        remote_type=RemoteType.REMOTE,
+        salary_min=180_000,
+        salary_max=230_000,
+        description=(
+            "Join Stripe's Dashboard team to build the financial UX used by millions of "
+            "businesses worldwide. You'll work with React, TypeScript, and GraphQL to "
+            "deliver delightful, accessible product experiences.\n\n"
+            "**What you'll do:**\n"
+            "- Own core Dashboard features end-to-end\n"
+            "- Collaborate closely with product designers and backend engineers\n"
+            "- Drive performance and accessibility improvements\n\n"
+            "**Requirements:**\n"
+            "- 5+ years of frontend engineering experience\n"
+            "- Deep expertise in React, TypeScript, and modern CSS\n"
+            "- Experience with GraphQL and REST APIs"
+        ),
+        url="https://stripe.com/jobs/listing/senior-frontend-engineer",
+        source="company",
+        posted_date=_days(-3),
+    ),
+    dict(
+        title="Staff Software Engineer, Infrastructure",
+        company="Vercel",
+        location="San Francisco, CA",
+        remote_type=RemoteType.REMOTE,
+        salary_min=220_000,
+        salary_max=290_000,
+        description=(
+            "Help build the platform that powers millions of developers. You'll work on "
+            "distributed systems, edge computing, and developer tooling at massive scale.\n\n"
+            "**What you'll do:**\n"
+            "- Design and implement core infrastructure components\n"
+            "- Drive technical strategy for the platform team\n\n"
+            "**Requirements:**\n"
+            "- 8+ years of software engineering\n"
+            "- Deep experience with distributed systems and cloud infrastructure\n"
+            "- Go, Rust, or C++ proficiency preferred"
+        ),
+        url="https://vercel.com/careers/staff-swe-infrastructure",
+        source="company",
+        posted_date=_days(-5),
+    ),
+    dict(
+        title="Principal Engineer",
+        company="Linear",
+        location="Remote",
+        remote_type=RemoteType.REMOTE,
+        salary_min=240_000,
+        salary_max=310_000,
+        description=(
+            "Set technical direction and help shape our product at Linear. You'll work on "
+            "our React + TypeScript codebase and own key systems end-to-end.\n\n"
+            "**Requirements:**\n"
+            "- 10+ years of engineering experience\n"
+            "- Exceptional TypeScript and React skills\n"
+            "- Strong background in product engineering"
+        ),
+        url="https://linear.app/careers/principal-engineer",
+        source="company",
+        posted_date=_days(-8),
+    ),
+    dict(
+        title="Senior Backend Engineer, Payments",
+        company="Plaid",
+        location="San Francisco, CA",
+        remote_type=RemoteType.HYBRID,
+        salary_min=175_000,
+        salary_max=235_000,
+        description=(
+            "Build the financial infrastructure of the internet at Plaid. You'll design "
+            "and maintain high-throughput APIs consumed by thousands of external developers.\n\n"
+            "**Requirements:**\n"
+            "- 4+ years of backend engineering\n"
+            "- Strong Python, Go, or Java skills\n"
+            "- Experience with financial data or payment systems a plus"
+        ),
+        url="https://plaid.com/careers/backend-payments",
+        source="linkedin",
+        posted_date=_days(-6),
+    ),
+    dict(
+        title="Engineering Manager, Platform",
+        company="Figma",
+        location="San Francisco, CA",
+        remote_type=RemoteType.HYBRID,
+        salary_min=215_000,
+        salary_max=280_000,
+        description=(
+            "Lead a team of engineers building Figma's internal developer platform. "
+            "Balance hands-on technical work with people management and cross-functional "
+            "leadership.\n\n"
+            "**Requirements:**\n"
+            "- 3+ years of engineering management\n"
+            "- Strong technical background\n"
+            "- Experience with platform or infrastructure engineering"
+        ),
+        url="https://figma.com/careers/em-platform",
+        source="company",
+        posted_date=_days(-10),
+    ),
+    dict(
+        title="Senior Full-Stack Engineer",
+        company="Notion",
+        location="New York, NY",
+        remote_type=RemoteType.HYBRID,
+        salary_min=175_000,
+        salary_max=230_000,
+        description=(
+            "Help build the workspace that millions of teams rely on. You'll own features "
+            "end-to-end across our React frontend and Node.js backend.\n\n"
+            "**Requirements:**\n"
+            "- 4+ years of full-stack experience\n"
+            "- React, TypeScript, Node.js expertise\n"
+            "- Product sense and a user-first mindset"
+        ),
+        url="https://notion.so/careers/senior-fullstack",
+        source="linkedin",
+        posted_date=_days(-2),
+    ),
+    dict(
+        title="ML Platform Engineer",
+        company="Anthropic",
+        location="San Francisco, CA",
+        remote_type=RemoteType.HYBRID,
+        salary_min=250_000,
+        salary_max=350_000,
+        description=(
+            "Build the ML infrastructure powering the next generation of AI systems. "
+            "You'll work on distributed training, model serving, and developer tooling.\n\n"
+            "**Requirements:**\n"
+            "- 5+ years of ML infrastructure experience\n"
+            "- Deep knowledge of PyTorch and distributed training\n"
+            "- Experience with large-scale model serving systems"
+        ),
+        url="https://anthropic.com/careers/ml-platform-engineer",
+        source="company",
+        posted_date=_days(-4),
+    ),
+    dict(
+        title="Senior MLOps Engineer",
+        company="Cohere",
+        location="Toronto, Canada",
+        remote_type=RemoteType.REMOTE,
+        salary_min=165_000,
+        salary_max=220_000,
+        description=(
+            "Own the ML deployment pipeline at Cohere. You'll build and maintain the "
+            "systems that take models from research to production at scale.\n\n"
+            "**Requirements:**\n"
+            "- 4+ years of MLOps or ML engineering\n"
+            "- Strong Python and Docker/Kubernetes skills\n"
+            "- Experience with ML model serving and monitoring"
+        ),
+        url="https://cohere.com/careers/senior-mlops",
+        source="linkedin",
+        posted_date=_days(-7),
+    ),
+    dict(
+        title="Staff Platform Engineer",
+        company="Cloudflare",
+        location="Austin, TX",
+        remote_type=RemoteType.HYBRID,
+        salary_min=200_000,
+        salary_max=270_000,
+        description=(
+            "Help build Cloudflare's Workers platform, serving over 50 million requests "
+            "per second. You'll own critical infrastructure and shape platform strategy.\n\n"
+            "**Requirements:**\n"
+            "- 8+ years of platform/infrastructure engineering\n"
+            "- Deep knowledge of distributed systems and edge computing\n"
+            "- Go or Rust experience preferred"
+        ),
+        url="https://cloudflare.com/careers/staff-platform",
+        source="company",
+        posted_date=_days(-9),
+    ),
+    dict(
+        title="Senior SRE",
+        company="HashiCorp",
+        location="Remote",
+        remote_type=RemoteType.REMOTE,
+        salary_min=170_000,
+        salary_max=225_000,
+        description=(
+            "Ensure the reliability of HashiCorp's cloud products. You'll define SLOs, "
+            "lead incident response, and build observability systems at scale.\n\n"
+            "**Requirements:**\n"
+            "- 5+ years of SRE or infrastructure engineering\n"
+            "- Strong Kubernetes, Terraform, and Go skills\n"
+            "- Experience with SLO frameworks and blameless post-mortems"
+        ),
+        url="https://hashicorp.com/careers/senior-sre",
+        source="company",
+        posted_date=_days(-11),
+    ),
+    dict(
+        title="Data Engineer, Recommendations",
+        company="Spotify",
+        location="New York, NY",
+        remote_type=RemoteType.HYBRID,
+        salary_min=160_000,
+        salary_max=215_000,
+        description=(
+            "Build the data pipelines powering Spotify's personalisation systems. "
+            "You'll work with Kafka, Spark, and Flink to process billions of events daily.\n\n"
+            "**Requirements:**\n"
+            "- 4+ years of data engineering\n"
+            "- Strong Python, SQL, and Spark skills\n"
+            "- Experience with streaming data systems (Kafka, Flink)"
+        ),
+        url="https://spotify.com/careers/data-engineer-recs",
+        source="linkedin",
+        posted_date=_days(-6),
+    ),
+    dict(
+        title="Senior Data Scientist",
+        company="Airbnb",
+        location="San Francisco, CA",
+        remote_type=RemoteType.HYBRID,
+        salary_min=185_000,
+        salary_max=245_000,
+        description=(
+            "Apply machine learning and causal inference to improve the Airbnb experience "
+            "for 150M+ guests and 4M hosts worldwide.\n\n"
+            "**Requirements:**\n"
+            "- PhD or 5+ years of data science experience\n"
+            "- Strong Python, SQL, and experimentation skills\n"
+            "- Experience with recommendation systems or pricing models"
+        ),
+        url="https://airbnb.com/careers/senior-data-scientist",
+        source="company",
+        posted_date=_days(-14),
+    ),
+    dict(
+        title="Principal Platform Engineer",
+        company="GitHub",
+        location="Remote",
+        remote_type=RemoteType.REMOTE,
+        salary_min=240_000,
+        salary_max=320_000,
+        description=(
+            "Shape the deployment platform that runs GitHub.com. You'll define technical "
+            "direction and build systems used by 1,200+ engineers.\n\n"
+            "**Requirements:**\n"
+            "- 10+ years of platform or infrastructure engineering\n"
+            "- Deep Kubernetes, ArgoCD, and GitOps experience\n"
+            "- Proven track record of leading large-scale technical initiatives"
+        ),
+        url="https://github.com/careers/principal-platform",
+        source="company",
+        posted_date=_days(-5),
+    ),
+    dict(
+        title="Senior Software Engineer, Developer Experience",
+        company="Shopify",
+        location="Remote",
+        remote_type=RemoteType.REMOTE,
+        salary_min=165_000,
+        salary_max=215_000,
+        description=(
+            "Improve the developer experience for 10,000+ engineers at Shopify. "
+            "You'll build internal tooling, CI/CD infrastructure, and developer platforms.\n\n"
+            "**Requirements:**\n"
+            "- 5+ years of software engineering\n"
+            "- Strong Ruby, Go, or TypeScript skills\n"
+            "- Experience with developer tooling or platform engineering"
+        ),
+        url="https://shopify.com/careers/senior-swe-devex",
+        source="linkedin",
+        posted_date=_days(-10),
+    ),
+    dict(
+        title="Staff Machine Learning Engineer",
+        company="Hugging Face",
+        location="Remote",
+        remote_type=RemoteType.REMOTE,
+        salary_min=195_000,
+        salary_max=260_000,
+        description=(
+            "Push the frontier of open-source AI at Hugging Face. You'll work on model "
+            "training infrastructure, fine-tuning pipelines, and serving systems.\n\n"
+            "**Requirements:**\n"
+            "- 7+ years of ML engineering\n"
+            "- Deep PyTorch expertise and experience with LLMs\n"
+            "- Strong background in distributed training and model optimization"
+        ),
+        url="https://huggingface.co/careers/staff-mle",
+        source="company",
+        posted_date=_days(-4),
+    ),
+]
+
+
+# ─── Saved jobs ────────────────────────────────────────────────────────────────
+# 3–5 saved jobs per user.  `job_key` is (title, company) to resolve at runtime.
+
+_SAVED_JOBS: list[dict] = [
+    # ── Alex Chen ─────────────────────────────────────────────────────────────
+    dict(
+        user_key="alex@careerbridge.dev",
+        job_key=("Staff Software Engineer, Infrastructure", "Vercel"),
+        notes="Great comp. Reached out to a friend on the infra team.",
+    ),
+    dict(
+        user_key="alex@careerbridge.dev",
+        job_key=("Senior Frontend Engineer", "Stripe"),
+        notes=None,
+    ),
+    dict(
+        user_key="alex@careerbridge.dev",
+        job_key=("Principal Engineer", "Linear"),
+        notes="Dream job. Need to polish OSS portfolio first.",
+    ),
+    # ── Priya Sharma ─────────────────────────────────────────────────────────
+    dict(
+        user_key="priya@careerbridge.dev",
+        job_key=("ML Platform Engineer", "Anthropic"),
+        notes="Reached out to recruiter on LinkedIn.",
+    ),
+    dict(
+        user_key="priya@careerbridge.dev",
+        job_key=("Staff Machine Learning Engineer", "Hugging Face"),
+        notes=None,
+    ),
+    dict(
+        user_key="priya@careerbridge.dev",
+        job_key=("Senior Data Scientist", "Airbnb"),
+        notes="Good fallback option. Strong data culture.",
+    ),
+    # ── Marcus Johnson ────────────────────────────────────────────────────────
+    dict(
+        user_key="marcus@careerbridge.dev",
+        job_key=("Principal Platform Engineer", "GitHub"),
+        notes="Internal referral possible — checking with former teammate.",
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        job_key=("Staff Platform Engineer", "Cloudflare"),
+        notes=None,
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        job_key=("Senior SRE", "HashiCorp"),
+        notes="Good culture fit based on company blog posts.",
+    ),
+    dict(
+        user_key="marcus@careerbridge.dev",
+        job_key=("Senior Software Engineer, Developer Experience", "Shopify"),
+        notes=None,
+    ),
+]
+
+
 # ─── Seed runner ──────────────────────────────────────────────────────────────
 
 
@@ -1479,6 +1842,81 @@ async def _run() -> None:
 
         await session.commit()
         print(f"  {events_inserted} inserted")
+
+        # ── Jobs ───────────────────────────────────────────────────────────────
+        print()
+        print("─── Jobs ────────────────────────────────────────────────────────")
+
+        job_planned: list[tuple[uuid.UUID, dict]] = []
+        for j in _JOBS:
+            job_id = _seed_uuid("job", j["title"], j["company"])
+            job_planned.append((job_id, j))
+
+        existing_job_result = await session.execute(
+            select(Job.id).where(Job.id.in_([jid for jid, _ in job_planned]))
+        )
+        existing_job_ids = {row[0] for row in existing_job_result}
+
+        jobs_inserted = 0
+        job_id_by_key: dict[tuple[str, str], uuid.UUID] = {}
+        for job_id, j in job_planned:
+            job_id_by_key[(j["title"], j["company"])] = job_id
+            if job_id in existing_job_ids:
+                continue
+            session.add(
+                Job(
+                    id=job_id,
+                    title=j["title"],
+                    company=j["company"],
+                    location=j.get("location"),
+                    remote_type=j["remote_type"].value,
+                    salary_min=j.get("salary_min"),
+                    salary_max=j.get("salary_max"),
+                    description=j.get("description"),
+                    url=j.get("url"),
+                    source=j.get("source", "manual"),
+                    posted_date=j.get("posted_date"),
+                    created_at=now,
+                )
+            )
+            jobs_inserted += 1
+
+        await session.commit()
+
+        jobs_skipped = len(job_planned) - jobs_inserted
+        print(
+            f"  {jobs_inserted} inserted, {jobs_skipped} already existed "
+            f"({len(job_planned)} total)"
+        )
+
+        # ── Saved Jobs ─────────────────────────────────────────────────────────
+        print()
+        print("─── Saved Jobs ──────────────────────────────────────────────────")
+
+        saved_inserted = 0
+        for sv in _SAVED_JOBS:
+            user_id = user_ids[sv["user_key"]]
+            job_id = job_id_by_key.get(sv["job_key"])
+            if job_id is None:
+                print(f"  warn   job not found: {sv['job_key']}")
+                continue
+            saved_id = _seed_uuid(str(user_id), "saved_job", str(job_id))
+            existing_sv = await session.get(SavedJob, saved_id)
+            if existing_sv:
+                continue
+            session.add(
+                SavedJob(
+                    id=saved_id,
+                    user_id=user_id,
+                    job_id=job_id,
+                    saved_at=now,
+                    notes=sv.get("notes"),
+                )
+            )
+            saved_inserted += 1
+
+        await session.commit()
+        print(f"  {saved_inserted} inserted")
 
     # ── Summary ────────────────────────────────────────────────────────────────
     print()

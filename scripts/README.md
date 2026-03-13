@@ -46,6 +46,23 @@ Leaves the schema intact with empty tables.
 devenv shell -- wipe
 ```
 
+### `seed-jobs.py` — Re-seed only the jobs table
+
+Re-inserts the 15 sample job fixtures without touching any user data
+(applications, resumes, experiences, saved jobs). Safe to run at any time —
+uses deterministic UUIDs so it is a no-op if the jobs are already present.
+Useful during development to refresh job listings without performing a full
+database reset.
+
+```bash
+devenv shell -- seed-jobs
+```
+
+Note: This script does **not** re-seed `saved_jobs`. Use `reset` for a
+complete clean slate that rebuilds all tables including saved jobs.
+
+---
+
 ## Adding New Scripts
 
 1. Create `scripts/<name>.py` with a `main()` entry point.

@@ -79,10 +79,11 @@
     echo ""
     echo "Services: PostgreSQL (5432), Redis (6379)"
     echo "  devenv up               — start all services + servers (runs migrations automatically)"
-    echo "  devenv shell -- migrate — run pending database migrations"
-    echo "  devenv shell -- seed    — seed the database with realistic mock data"
-    echo "  devenv shell -- reset   — truncate all data and re-seed"
-    echo "  devenv shell -- wipe    — remove all data without re-seeding"
+    echo "  devenv shell -- migrate    — run pending database migrations"
+    echo "  devenv shell -- seed       — seed the database with realistic mock data"
+    echo "  devenv shell -- reset      — truncate all data and re-seed"
+    echo "  devenv shell -- wipe       — remove all data without re-seeding"
+    echo "  devenv shell -- seed-jobs  — re-seed only the jobs table"
     echo "  cd backend && pytest    — run backend tests"
     echo "  cd frontend && npm test — run frontend tests"
     echo ""
@@ -118,6 +119,14 @@
         python "$DEVENV_ROOT/scripts/wipe.py" "$@"
     '';
     description = "Remove all data from the database without re-seeding.";
+  };
+
+  scripts.seed-jobs = {
+    exec = ''
+      PYTHONPATH="$DEVENV_ROOT/backend:$DEVENV_ROOT/scripts" \
+        python "$DEVENV_ROOT/scripts/seed-jobs.py" "$@"
+    '';
+    description = "Re-seed only the jobs table without touching user data.";
   };
 
   # ─── Git hooks ────────────────────────────────────────────────────────
