@@ -5,6 +5,15 @@ registered as devenv commands and run inside the devenv shell.
 
 ## Available Scripts
 
+### `migrate` — Run database migrations
+
+Runs `alembic upgrade head` from the `backend/` directory. This is also run
+automatically each time `devenv up` starts the backend process.
+
+```bash
+devenv shell -- migrate
+```
+
 ### `seed.py` — Seed the database
 
 Populates the database with realistic mock data for all three seed users:
@@ -26,6 +35,15 @@ a clean, known-good state.
 
 ```bash
 devenv shell -- reset
+```
+
+### `wipe.py` — Wipe the database
+
+Truncates all user data (same tables as `reset`) but does **not** re-seed.
+Leaves the schema intact with empty tables.
+
+```bash
+devenv shell -- wipe
 ```
 
 ## Adding New Scripts

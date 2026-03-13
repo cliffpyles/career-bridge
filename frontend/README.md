@@ -142,9 +142,9 @@ test('renders', () => {
 
 ## Environment Variables
 
-| Variable           | Default    | Description                              |
-| ------------------ | ---------- | ---------------------------------------- |
-| `VITE_API_BASE_URL`| `/api`     | Base path for all API requests           |
-| `VITE_APP_VERSION` | `0.0.0`    | Injected at build time for the UI        |
+| Variable        | Default | Description                                          |
+| --------------- | ------- | ---------------------------------------------------- |
+| `VITE_API_URL`  | `/api`  | Base path for all API requests                       |
+| `VITE_MSW`      | `false` | Set to `true` to enable MSW request interception     |
 
 Copy `.env.example` to `.env.local` and override as needed for local development.

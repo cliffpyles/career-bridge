@@ -79,7 +79,13 @@ pip install -r requirements.txt
 
 ### Environment variables
 
-Create a `.env` file in `backend/` (or export these variables):
+Copy `.env.example` to `.env` and fill in any values you need to override:
+
+```bash
+cp .env.example .env
+```
+
+Full variable reference:
 
 | Variable            | Required | Default              | Description                              |
 | ------------------- | -------- | -------------------- | ---------------------------------------- |
@@ -96,6 +102,9 @@ Create a `.env` file in `backend/` (or export these variables):
 | `ANTHROPIC_API_KEY` | No       | —                    | Required if `AI_PROVIDER=anthropic`      |
 
 ### Run migrations
+
+When using `devenv up`, migrations run automatically before the backend starts.
+To run them manually (or outside devenv):
 
 ```bash
 alembic upgrade head

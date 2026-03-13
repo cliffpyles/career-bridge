@@ -48,7 +48,7 @@
   # ─── Process-compose: run all services together ───────────────────────
   processes = {
     backend = {
-      exec = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload";
+      exec = "cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload";
       process-compose = {
         depends_on = {
           postgres.condition = "process_healthy";
@@ -78,15 +78,24 @@
     echo "Career Bridge dev environment ready."
     echo ""
     echo "Services: PostgreSQL (5432), Redis (6379)"
-    echo "  devenv up               — start all services + servers"
+    echo "  devenv up               — start all services + servers (runs migrations automatically)"
+    echo "  devenv shell -- migrate — run pending database migrations"
     echo "  devenv shell -- seed    — seed the database with realistic mock data"
     echo "  devenv shell -- reset   — truncate all data and re-seed"
+    echo "  devenv shell -- wipe    — remove all data without re-seeding"
     echo "  cd backend && pytest    — run backend tests"
     echo "  cd frontend && npm test — run frontend tests"
     echo ""
   '';
 
   # ─── Scripts (available as commands inside the devenv shell) ─────────────
+  scripts.migrate = {
+    exec = ''
+      cd "$DEVENV_ROOT/backend" && alembic upgrade head "$@"
+    '';
+    description = "Run pending Alembic database migrations (upgrade to head).";
+  };
+
   scripts.seed = {
     exec = ''
       PYTHONPATH="$DEVENV_ROOT/backend:$DEVENV_ROOT/scripts" \
@@ -101,6 +110,14 @@
         python "$DEVENV_ROOT/scripts/reset.py" "$@"
     '';
     description = "Truncate all dev data and re-seed from scratch.";
+  };
+
+  scripts.wipe = {
+    exec = ''
+      PYTHONPATH="$DEVENV_ROOT/backend:$DEVENV_ROOT/scripts" \
+        python "$DEVENV_ROOT/scripts/wipe.py" "$@"
+    '';
+    description = "Remove all data from the database without re-seeding.";
   };
 
   # ─── Git hooks ────────────────────────────────────────────────────────

@@ -38,9 +38,9 @@ career-bridge/
 devenv up
 ```
 
-This starts PostgreSQL 16, Redis 7, the FastAPI backend (`:8000`), and the Vite dev server (`:5173`) together using process-compose. All runtimes and services are pinned by Nix — no global installs required.
+This starts PostgreSQL 16, Redis 7, the FastAPI backend (`:8000`), and the Vite dev server (`:5173`) together using process-compose. Database migrations run automatically before the backend starts. All runtimes and services are pinned by Nix — no global installs required.
 
-Once the services are running, seed the database with realistic dev data:
+To seed the database with realistic dev data:
 
 ```bash
 devenv shell -- seed
@@ -52,6 +52,12 @@ To wipe all data and start fresh from a clean seed:
 
 ```bash
 devenv shell -- reset
+```
+
+To remove all data without re-seeding:
+
+```bash
+devenv shell -- wipe
 ```
 
 | Seed account            | Password   |
