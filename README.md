@@ -43,10 +43,16 @@ This starts PostgreSQL 16, Redis 7, the FastAPI backend (`:8000`), and the Vite 
 Once the services are running, seed the database with realistic dev data:
 
 ```bash
-seed
+devenv shell -- seed
 ```
 
-This creates three pre-built user accounts and 18 experience entries (one of every type per user) you can use to explore all features. The command is idempotent — safe to run multiple times.
+This creates three pre-built user accounts, 18 experience entries, and 6 resumes (two per user) you can use to explore all features. The command is idempotent — safe to run multiple times.
+
+To wipe all data and start fresh from a clean seed:
+
+```bash
+devenv shell -- reset
+```
 
 | Seed account            | Password   |
 | ----------------------- | ---------- |
@@ -90,7 +96,7 @@ export SECRET_KEY="change-me"
 alembic upgrade head
 
 # Seed with dev data (optional)
-python scripts/seed.py
+PYTHONPATH="$(pwd)" python ../scripts/seed.py
 
 # Start the dev server
 uvicorn app.main:app --reload   # http://localhost:8000

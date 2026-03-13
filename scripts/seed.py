@@ -6,14 +6,18 @@ Idempotent — safe to run multiple times:
   - Experiences use deterministic UUIDs (uuid5) keyed on user + type + title,
     so re-runs are no-ops via INSERT … ON CONFLICT (id) DO NOTHING.
 
+Requires PostgreSQL to be running (start it with `devenv up` in a separate
+terminal, or run `devenv up --detach` first).
+
 Usage (inside the devenv shell):
     seed
 
 Or from any shell at the repo root:
-    devenv shell seed
+    devenv shell -- seed
 """
 
 import asyncio
+import socket
 import sys
 import uuid
 from datetime import date, datetime, timezone
@@ -84,7 +88,9 @@ _EXPERIENCES: list[dict] = [
             "to microservices, and shaped the roadmap for internal tooling used by "
             "all 400 engineers."
         ),
-        impact_metrics=("Reduced P95 API latency by 40 %; decreased on-call incidents by 35 %."),
+        impact_metrics=(
+            "Reduced P95 API latency by 40 %; decreased on-call incidents by 35 %."
+        ),
         tags=["Python", "Go", "Kubernetes", "API Design", "Team Lead"],
     ),
     dict(
@@ -99,7 +105,9 @@ _EXPERIENCES: list[dict] = [
             "editing features used by 500 M+ users and optimised the sync engine for "
             "large files."
         ),
-        impact_metrics=("Shipped Paper collaborative editor to GA; reduced sync errors by 28 %."),
+        impact_metrics=(
+            "Shipped Paper collaborative editor to GA; reduced sync errors by 28 %."
+        ),
         tags=["Python", "TypeScript", "React", "Redis", "WebSockets"],
     ),
     dict(
@@ -211,7 +219,9 @@ _EXPERIENCES: list[dict] = [
             "events in real time using Kafka and a two-tower neural network model. "
             "Replaced a 24-hour batch job with sub-second feature freshness."
         ),
-        impact_metrics=("Home feed CTR improved by 23 %; P99 serving latency held under 50 ms."),
+        impact_metrics=(
+            "Home feed CTR improved by 23 %; P99 serving latency held under 50 ms."
+        ),
         tags=["PyTorch", "Kafka", "Feature Store", "Two-Tower Model", "Real-Time ML"],
     ),
     dict(
@@ -226,8 +236,16 @@ _EXPERIENCES: list[dict] = [
             "with spot-instance orchestration. Implemented distributed data loading "
             "and gradient checkpointing."
         ),
-        impact_metrics=("Training throughput increased 10×; training costs reduced by 60 %."),
-        tags=["GCP", "Vertex AI", "Distributed Training", "PyTorch", "Cost Optimisation"],
+        impact_metrics=(
+            "Training throughput increased 10×; training costs reduced by 60 %."
+        ),
+        tags=[
+            "GCP",
+            "Vertex AI",
+            "Distributed Training",
+            "PyTorch",
+            "Cost Optimisation",
+        ],
     ),
     dict(
         user_key="priya@careerbridge.dev",
@@ -242,7 +260,16 @@ _EXPERIENCES: list[dict] = [
             "real-time serving patterns."
         ),
         impact_metrics=None,
-        tags=["Python", "PyTorch", "TensorFlow", "Spark", "SQL", "dbt", "MLflow", "Kafka"],
+        tags=[
+            "Python",
+            "PyTorch",
+            "TensorFlow",
+            "Spark",
+            "SQL",
+            "dbt",
+            "MLflow",
+            "Kafka",
+        ],
     ),
     dict(
         user_key="priya@careerbridge.dev",
@@ -343,7 +370,16 @@ _EXPERIENCES: list[dict] = [
             "observability, and developer platforms. Builder and operator mindset."
         ),
         impact_metrics=None,
-        tags=["Kubernetes", "Terraform", "AWS", "GCP", "Go", "Python", "ArgoCD", "Prometheus"],
+        tags=[
+            "Kubernetes",
+            "Terraform",
+            "AWS",
+            "GCP",
+            "Go",
+            "Python",
+            "ArgoCD",
+            "Prometheus",
+        ],
     ),
     dict(
         user_key="marcus@careerbridge.dev",
@@ -431,7 +467,13 @@ _RESUMES: list[dict] = [
                         "id": "alex-proj-1",
                         "name": "Internal Developer Platform",
                         "description": "Self-service CI/CD, feature flags, and observability hub.",
-                        "technologies": ["Python", "Go", "Backstage", "Terraform", "Kubernetes"],
+                        "technologies": [
+                            "Python",
+                            "Go",
+                            "Backstage",
+                            "Terraform",
+                            "Kubernetes",
+                        ],
                         "url": "",
                         "bullets": [
                             "Reduced new-service setup from 3 days to 2 hours.",
@@ -450,7 +492,12 @@ _RESUMES: list[dict] = [
                     },
                     {
                         "name": "Practices",
-                        "skills": ["API Design", "Distributed Systems", "SLO/SLA", "On-Call"],
+                        "skills": [
+                            "API Design",
+                            "Distributed Systems",
+                            "SLO/SLA",
+                            "On-Call",
+                        ],
                     },
                 ],
             },
@@ -519,7 +566,12 @@ _RESUMES: list[dict] = [
                 "categories": [
                     {
                         "name": "Product",
-                        "skills": ["Roadmapping", "OKRs", "User Research", "A/B Testing"],
+                        "skills": [
+                            "Roadmapping",
+                            "OKRs",
+                            "User Research",
+                            "A/B Testing",
+                        ],
                     },
                     {
                         "name": "Technical",
@@ -628,7 +680,13 @@ _RESUMES: list[dict] = [
                     },
                     {
                         "name": "MLOps",
-                        "skills": ["MLflow", "Vertex AI", "Feature Store", "Docker", "GCP"],
+                        "skills": [
+                            "MLflow",
+                            "Vertex AI",
+                            "Feature Store",
+                            "Docker",
+                            "GCP",
+                        ],
                     },
                 ],
             },
@@ -814,7 +872,10 @@ _RESUMES: list[dict] = [
                         "name": "Orchestration",
                         "skills": ["Kubernetes", "ArgoCD", "Argo Rollouts", "Helm"],
                     },
-                    {"name": "IaC & Cloud", "skills": ["Terraform", "AWS", "GCP", "Pulumi"]},
+                    {
+                        "name": "IaC & Cloud",
+                        "skills": ["Terraform", "AWS", "GCP", "Pulumi"],
+                    },
                     {
                         "name": "Observability",
                         "skills": ["Prometheus", "Grafana", "Jaeger", "OpenTelemetry"],
@@ -909,7 +970,10 @@ _RESUMES: list[dict] = [
                         "name": "Observability",
                         "skills": ["Prometheus", "Grafana", "Jaeger", "PagerDuty"],
                     },
-                    {"name": "Infrastructure", "skills": ["Kubernetes", "AWS", "Terraform"]},
+                    {
+                        "name": "Infrastructure",
+                        "skills": ["Kubernetes", "AWS", "Terraform"],
+                    },
                 ],
             },
             {
@@ -1008,7 +1072,9 @@ async def _run() -> None:
         await session.commit()
 
         skipped = len(planned) - inserted
-        print(f"  {inserted} inserted, {skipped} already existed ({len(planned)} total)")
+        print(
+            f"  {inserted} inserted, {skipped} already existed ({len(planned)} total)"
+        )
 
         # ── Resumes ────────────────────────────────────────────────────────────
         print()
@@ -1070,7 +1136,24 @@ async def _run() -> None:
     print()
 
 
+def _check_postgres() -> None:
+    """Fail fast with a helpful message if PostgreSQL is not reachable."""
+    try:
+        with socket.create_connection(("127.0.0.1", 5432), timeout=2):
+            pass
+    except OSError:
+        print(
+            "\nCannot reach PostgreSQL on localhost:5432.\n"
+            "Start the dev services first:\n\n"
+            "    devenv up\n\n"
+            "Then run this command in a second terminal.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
 def main() -> None:
+    _check_postgres()
     try:
         asyncio.run(_run())
     except Exception as exc:  # noqa: BLE001

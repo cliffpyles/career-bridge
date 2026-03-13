@@ -79,7 +79,8 @@
     echo ""
     echo "Services: PostgreSQL (5432), Redis (6379)"
     echo "  devenv up               — start all services + servers"
-    echo "  seed                    — seed the database with realistic mock data"
+    echo "  devenv shell -- seed    — seed the database with realistic mock data"
+    echo "  devenv shell -- reset   — truncate all data and re-seed"
     echo "  cd backend && pytest    — run backend tests"
     echo "  cd frontend && npm test — run frontend tests"
     echo ""
@@ -88,9 +89,18 @@
   # ─── Scripts (available as commands inside the devenv shell) ─────────────
   scripts.seed = {
     exec = ''
-      cd "$DEVENV_ROOT/backend" && PYTHONPATH="$DEVENV_ROOT/backend" python scripts/seed.py "$@"
+      PYTHONPATH="$DEVENV_ROOT/backend:$DEVENV_ROOT/scripts" \
+        python "$DEVENV_ROOT/scripts/seed.py" "$@"
     '';
     description = "Seed the database with realistic mock data (idempotent).";
+  };
+
+  scripts.reset = {
+    exec = ''
+      PYTHONPATH="$DEVENV_ROOT/backend:$DEVENV_ROOT/scripts" \
+        python "$DEVENV_ROOT/scripts/reset.py" "$@"
+    '';
+    description = "Truncate all dev data and re-seed from scratch.";
   };
 
   # ─── Git hooks ────────────────────────────────────────────────────────
