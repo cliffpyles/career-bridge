@@ -27,9 +27,16 @@ export function Modal({
     const dialog = dialogRef.current
     if (!dialog) return
     if (open) {
-      dialog.showModal()
+      // Guard against React StrictMode double-invocation: calling showModal()
+      // on an already-open dialog throws InvalidStateError, which can cause
+      // the dialog to lose its top-layer placement in some browsers.
+      if (!dialog.open) {
+        dialog.showModal()
+      }
     } else {
-      dialog.close()
+      if (dialog.open) {
+        dialog.close()
+      }
     }
   }, [open])
 

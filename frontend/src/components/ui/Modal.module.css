@@ -7,8 +7,12 @@
   width: 100%;
   max-height: calc(100dvh - var(--space-16));
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  /*
+   * Do NOT set `display` here. The browser UA rule `dialog:not([open]) { display: none }`
+   * is what hides closed dialogs. If we set `display: flex` on `.dialog` it overrides
+   * that rule, making every closed modal render as a visible element in the page flow
+   * (the "modal shows on page load" bug).
+   */
 }
 
 .dialog::backdrop {
@@ -18,6 +22,24 @@
 }
 
 .dialog[open] {
+  /*
+   * Only set display and positioning when the dialog actually has [open].
+   *
+   * `position: fixed; inset: 0; margin: auto` is the correct pattern for
+   * centering a top-layer dialog. Chrome's internal UA only sets
+   * `inset-block-start: 0` — without `inset-block-end: 0` as well, `margin: auto`
+   * can only center horizontally, leaving the dialog pinned to the top edge.
+   * Explicit `inset: 0` gives auto-margin room to center on both axes.
+   *
+   * z-index: 1000 guards against browsers where backdrop-filter (used on the
+   * context bar) can accidentally surface a stacking context above the top layer.
+   */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: 1000;
   animation: scaleIn var(--duration-slow) var(--ease-out);
 }
 
@@ -95,13 +117,25 @@
   to   { opacity: 1; }
 }
 
-@media (max-width: 640px) {
+/*
+ * Tablet (640px–1024px): bottom nav is visible but the dialog is still
+ * centered. Reduce max-height so the dialog never dips into the nav zone.
+ */
+@media (max-width: 1024px) {
   .dialog {
+    max-height: calc(100dvh - var(--space-16) - var(--bottom-nav-height));
+  }
+}
+
+/*
+ * Mobile (<640px): bottom-sheet presentation. Override inset so the sheet
+ * anchors to the bottom edge instead of centering. The top-layer backdrop
+ * covers the bottom nav behind it so the sheet can freely use the full height.
+ */
+@media (max-width: 640px) {
+  .dialog[open] {
+    inset: auto 0 0 0;
     margin: 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     max-width: 100%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
