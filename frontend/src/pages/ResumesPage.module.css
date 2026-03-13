@@ -86,6 +86,100 @@
   margin-top: var(--space-5);
 }
 
+/* ── AI generation section ────────────────────────────── */
+
+.aiSection {
+  margin-top: var(--space-10);
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out) 150ms both;
+}
+
+.aiDivider {
+  border: none;
+  border-top: 1px dashed var(--border-default);
+  margin-bottom: var(--space-8);
+}
+
+.aiHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.aiIcon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.aiTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl-lh);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-1);
+}
+
+.aiDescription {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 55ch;
+}
+
+.aiForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 680px;
+}
+
+.aiLabel {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.aiTextarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-tertiary);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  box-sizing: border-box;
+}
+
+.aiTextarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.aiTextarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-soft);
+  background: var(--surface-primary);
+}
+
+.aiError {
+  font-size: var(--text-sm);
+  color: var(--accent-danger);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.aiActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* ── Animations ───────────────────────────────────────── */
 
 @keyframes fadeSlideIn {

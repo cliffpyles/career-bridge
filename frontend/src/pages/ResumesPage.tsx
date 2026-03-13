@@ -1,19 +1,22 @@
 /**
  * ResumesPage — the Resume Library.
  * Displays all resumes in a card grid with create/delete actions.
+ * Includes an AI generation section to build tailored resumes from job descriptions.
  */
-import { useState } from 'react'
-import { Plus, FileText } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Plus, FileText, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { ContextBar } from '../components/layout/ContextBar'
 import { ResumeCard } from '../components/resume/ResumeCard'
+import { AIGenerationOverlay } from '../components/ui/AIGenerationOverlay'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 import { Input } from '../components/ui/Input'
 import { Modal } from '../components/ui/Modal'
 import { Skeleton } from '../components/ui/Skeleton'
+import { useAIStream } from '../hooks/useAIStream'
 import { useCreateResume, useDeleteResume, useResumes } from '../queries/resumes'
-import type { Resume } from '../types/resume'
+import type { Resume, ResumeCreate } from '../types/resume'
 import { defaultSections } from '../types/resume'
 import styles from './ResumesPage.module.css'
 
@@ -34,14 +37,67 @@ function GridSkeleton() {
 
 export function ResumesPage() {
   const navigate = useNavigate()
+
+  // Manual create state
   const [createOpen, setCreateOpen] = useState(false)
   const [newName, setNewName] = useState('')
   const [nameError, setNameError] = useState('')
   const [deleteTarget, setDeleteTarget] = useState<Resume | undefined>()
 
+  // AI generation state
+  const [jobDescription, setJobDescription] = useState('')
+  const [aiGenerating, setAiGenerating] = useState(false)
+  const [aiError, setAiError] = useState('')
+  const jobDescRef = useRef<HTMLTextAreaElement>(null)
+
   const { data: resumes, isLoading, isError } = useResumes()
   const createMutation = useCreateResume()
   const deleteMutation = useDeleteResume()
+
+  const { streamText, start: startStream, cancel: cancelStream } = useAIStream<{
+    resume: ResumeCreate
+  }>({
+    onComplete: async (result) => {
+      try {
+        const generated = result.resume
+        const created = await createMutation.mutateAsync({
+          name: generated.name ?? 'AI-Generated Resume',
+          sections: generated.sections ?? defaultSections(),
+        })
+        setAiGenerating(false)
+        setJobDescription('')
+        navigate(`/resumes/${created.id}`, { state: { aiGenerated: true } })
+      } catch {
+        setAiGenerating(false)
+        setAiError("We couldn't save the generated resume. Please try again.")
+      }
+    },
+    onError: (err) => {
+      setAiGenerating(false)
+      setAiError(err.message || 'Generation failed. Please try again.')
+    },
+  })
+
+  async function handleGenerate() {
+    const trimmed = jobDescription.trim()
+    if (!trimmed) {
+      setAiError('Paste a job description to generate a tailored resume.')
+      jobDescRef.current?.focus()
+      return
+    }
+    if (trimmed.length < 10) {
+      setAiError('The job description is too short. Paste the full posting for best results.')
+      return
+    }
+    setAiError('')
+    setAiGenerating(true)
+    await startStream('/ai/generate-resume', { job_description: trimmed })
+  }
+
+  function handleCancelGeneration() {
+    cancelStream()
+    setAiGenerating(false)
+  }
 
   async function handleCreate() {
     const trimmed = newName.trim()
@@ -152,8 +208,74 @@ export function ResumesPage() {
               ))}
             </div>
           )}
+
+          {/* ── AI Resume Generation ──────────────────────────── */}
+          {!isLoading && !isError && (
+            <section
+              className={styles.aiSection}
+              aria-labelledby="ai-generation-heading"
+            >
+              <div className={styles.aiDivider} aria-hidden="true" />
+
+              <div className={styles.aiHeader}>
+                <Sparkles size={18} className={styles.aiIcon} aria-hidden="true" />
+                <div>
+                  <h2 id="ai-generation-heading" className={styles.aiTitle}>
+                    AI Resume Generation
+                  </h2>
+                  <p className={styles.aiDescription}>
+                    Paste a job posting and we'll select the most relevant entries
+                    from your experience library to build a tailored resume.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.aiForm}>
+                <label htmlFor="job-description" className={styles.aiLabel}>
+                  Job posting or description
+                </label>
+                <textarea
+                  id="job-description"
+                  ref={jobDescRef}
+                  className={styles.aiTextarea}
+                  value={jobDescription}
+                  onChange={(e) => {
+                    setJobDescription(e.target.value)
+                    if (aiError) setAiError('')
+                  }}
+                  placeholder="Paste the full job description here — the more detail, the better the tailoring…"
+                  rows={6}
+                  aria-describedby={aiError ? 'ai-error' : undefined}
+                />
+                {aiError && (
+                  <p id="ai-error" className={styles.aiError} role="alert">
+                    {aiError}
+                  </p>
+                )}
+                <div className={styles.aiActions}>
+                  <Button
+                    variant="primary"
+                    icon={<Sparkles size={15} />}
+                    onClick={handleGenerate}
+                    disabled={aiGenerating || !jobDescription.trim()}
+                    loading={aiGenerating}
+                  >
+                    Generate resume
+                  </Button>
+                </div>
+              </div>
+            </section>
+          )}
         </main>
       </div>
+
+      {/* AI generation overlay */}
+      <AIGenerationOverlay
+        open={aiGenerating}
+        streamText={streamText}
+        onCancel={handleCancelGeneration}
+        title="Generating your tailored resume…"
+      />
 
       {/* Create modal */}
       <Modal
