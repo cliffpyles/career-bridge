@@ -1,3 +1,4 @@
+import { aiHandlers } from './ai'
 import { applicationHandlers } from './applications'
 import { dashboardHandlers } from './dashboard'
 import { experienceHandlers } from './experiences'
@@ -12,4 +13,5 @@ export const handlers = [
   ...applicationHandlers,
   ...dashboardHandlers,
   ...jobHandlers,
+  ...aiHandlers,
 ]
