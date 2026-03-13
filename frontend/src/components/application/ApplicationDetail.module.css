@@ -1,0 +1,254 @@
+/* ── ApplicationDetail ─────────────────────────────────────────── */
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.role {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl-lh);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.company {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.appliedDate {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.externalLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.externalLink:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+/* ── Sections ─────────────────────────────────────────────────── */
+
+.section {
+  padding: var(--space-5) 0;
+}
+
+.sectionLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+/* ── Next action ──────────────────────────────────────────────── */
+
+.nextAction {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nextActionText {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.nextActionDate {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--accent-warning);
+  display: block;
+}
+
+/* ── Notes ────────────────────────────────────────────────────── */
+
+.notesText {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── Timeline section ─────────────────────────────────────────── */
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.timelineHeader .sectionLabel {
+  margin-bottom: 0;
+}
+
+.addEventForm {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.addEventTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.addEventRow {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: var(--space-4);
+}
+
+.addEventActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.formError {
+  font-size: var(--text-sm);
+  color: var(--accent-danger);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, var(--accent-danger) 8%, transparent);
+  border-radius: 6px;
+}
+
+.eventsSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeletonEntry {
+  padding: var(--space-2) 0;
+}
+
+/* ── Linked items ─────────────────────────────────────────────── */
+
+.linkedItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.linkedIcon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.linkedLabel {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.noLinkedItems {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ── Status footer ────────────────────────────────────────────── */
+
+.statusFooter {
+  padding-top: var(--space-5);
+  display: flex;
+  align-items: center;
+}
+
+.statusLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 20px;
+  background: var(--surface-secondary);
+  color: var(--text-secondary);
+}
+
+.statusLabel[data-status='ACCEPTED'] {
+  background: color-mix(in srgb, var(--accent-success) 12%, transparent);
+  color: var(--accent-success);
+}
+
+.statusLabel[data-status='REJECTED'] {
+  background: color-mix(in srgb, var(--accent-danger) 10%, transparent);
+  color: var(--accent-danger);
+}
+
+.statusLabel[data-status='OFFER'] {
+  background: color-mix(in srgb, var(--accent-success) 10%, transparent);
+  color: var(--accent-success);
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .addEventRow {
+    grid-template-columns: 1fr;
+  }
+}
