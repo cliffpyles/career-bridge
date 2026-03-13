@@ -3,11 +3,12 @@
  * Shows a list of applications with status filters and sort controls.
  * Clicking a row opens the detail slide-over.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router'
 import { ArrowUpRight, ChevronRight, ClipboardList, Plus, Search } from 'lucide-react'
 import { ContextBar } from '../components/layout/ContextBar'
 import { ApplicationDetail } from '../components/application/ApplicationDetail'
-import { ApplicationForm } from '../components/application/ApplicationForm'
+import { ApplicationForm, type ApplicationPrefill } from '../components/application/ApplicationForm'
 import { PipelineIndicator } from '../components/application/PipelineIndicator'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -83,10 +84,25 @@ function ApplicationListSkeleton() {
 }
 
 export function ApplicationsPage() {
+  const location = useLocation()
   const [filters, setFilters] = useState<ApplicationFilters>({ sort: 'recent' })
   const [formOpen, setFormOpen] = useState(false)
   const [editingApp, setEditingApp] = useState<Application | undefined>()
+  const [formPrefill, setFormPrefill] = useState<ApplicationPrefill | undefined>()
   const [detailApp, setDetailApp] = useState<Application | null>(null)
+
+  // Auto-open the new application form when navigated here with prefill state
+  // (e.g. from "Start Application" on the Job Board).
+  useEffect(() => {
+    const state = location.state as { prefill?: ApplicationPrefill } | null
+    if (state?.prefill) {
+      setFormPrefill(state.prefill)
+      setEditingApp(undefined)
+      setFormOpen(true)
+      // Clear the navigation state so a refresh doesn't re-open the form
+      window.history.replaceState({}, '')
+    }
+  }, [location.state])
   const [deleteTarget, setDeleteTarget] = useState<Application | undefined>()
 
   const { data: applications, isLoading, isError } = useApplications(filters)
@@ -110,6 +126,7 @@ export function ApplicationsPage() {
   function handleFormClose() {
     setFormOpen(false)
     setEditingApp(undefined)
+    setFormPrefill(undefined)
   }
 
   function openDetail(app: Application) {
@@ -347,6 +364,7 @@ export function ApplicationsPage() {
         open={formOpen}
         onClose={handleFormClose}
         application={editingApp}
+        prefill={!editingApp ? formPrefill : undefined}
       />
 
       {/* Application detail slide-over */}

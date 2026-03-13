@@ -77,17 +77,34 @@ function validate(form: FormState): FormErrors {
   return errors
 }
 
+export interface ApplicationPrefill {
+  company?: string
+  role?: string
+  url?: string
+}
+
 export interface ApplicationFormProps {
   open: boolean
   onClose: () => void
   application?: Application
+  prefill?: ApplicationPrefill
 }
 
-export function ApplicationForm({ open, onClose, application }: ApplicationFormProps) {
+export function ApplicationForm({ open, onClose, application, prefill }: ApplicationFormProps) {
   const isEditing = !!application
-  const [form, setForm] = useState<FormState>(() =>
-    isEditing ? fromApplication(application) : emptyForm(),
-  )
+  const [form, setForm] = useState<FormState>(() => {
+    if (isEditing) return fromApplication(application)
+    const base = emptyForm()
+    if (prefill) {
+      return {
+        ...base,
+        company: prefill.company ?? base.company,
+        role: prefill.role ?? base.role,
+        url: prefill.url ?? base.url,
+      }
+    }
+    return base
+  })
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitError, setSubmitError] = useState<string | null>(null)
 
