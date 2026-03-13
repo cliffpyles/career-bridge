@@ -94,8 +94,8 @@ async def restore_version(
     resume_id: uuid.UUID,
     version_id: uuid.UUID,
     current_user: CurrentUser,
+    db: DBSession,
     crud: ResumeCRUD = Depends(get_crud),
-    db: DBSession = Depends(),
 ) -> ResumeResponse:
     resume = await crud.get_for_user(resume_id, current_user.id)
     if resume is None:
